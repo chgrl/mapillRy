@@ -29,3 +29,16 @@ epoch_to_date <- function(epoch) {
   date_form <- strftime(date, "YYYY-MM-DD %H:%M:%S")
   return(date_form)
 }
+
+
+# convert list to data frame
+to_df <- function(lst) {
+	df <- as.data.frame(lst$ims[[1]], stringsAsFactors=FALSE)
+	num_ims <- length(lst$ims)
+	if(num_ims > 1) {
+		for(i in 2:num_ims) {
+			df <- rbind(df, as.data.frame(lst$ims[[i]], stringsAsFactors=FALSE))
+		}
+	}
+	return(df)
+}
