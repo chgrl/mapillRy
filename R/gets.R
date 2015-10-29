@@ -52,9 +52,10 @@ m_search_im_close <- function(lat, lon, distance,
     start_time=start_time, end_time=end_time, min_ca=min_ca, max_ca=max_ca, 
 		user=user, limit=limit, page=page)
   raw <- m_parse(res)
+  df <- to_df(raw)
   
   # return
-  if(print) print(raw)
-  invisible(raw)
+  if(print) print(df)
+  invisible(df)
 }
 
