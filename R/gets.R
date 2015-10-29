@@ -22,7 +22,7 @@
 #' }
 m_search_im_close <- function(lat, lon, distance, 
   start_time, end_time, min_ca, max_ca, 
-  user, limit=1, page, print=TRUE) {
+  user, limit, page, print=TRUE) {
 	
 	# check parameters
 	if(missing(lat) || missing(lon)) stop("'lat' and 'lon' are mandatory parameters.") 
@@ -44,6 +44,7 @@ m_search_im_close <- function(lat, lon, distance,
 	if(missing(min_ca)) min_ca <- NULL
 	if(missing(max_ca)) max_ca <- NULL
 	if(missing(user)) user <- NULL
+	if(missing(limit)) limit <- NULL
 	if(missing(page)) page <- NULL
 	
 	# make request
