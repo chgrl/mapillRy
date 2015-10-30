@@ -1,4 +1,3 @@
-#' @title Search the ZEIT archive
 #' @title Search for images
 #' @description Search for images by different constrains.
 #'
@@ -73,6 +72,7 @@ m_search_im <- function(min_lat, max_lat, min_lon, max_lon,
 }
 
 
+#' @title Search for images close to location
 #' @description Get images close to a certain point defined my longitude, latitude, 
 #' max angle, min angle and a radius in meters.
 #'
@@ -87,12 +87,12 @@ m_search_im <- function(min_lat, max_lat, min_lon, max_lon,
 #' @param limit Results per page in pagination.
 #' @param page Page number in pagination.
 #' @param print if \code{TRUE} (default) the search results are printed.
-#' @return A list of matching images with corresponding metadata.
+#' @return A \code{data.frame} of matching images.
 #' @source \url{https://a.mapillary.com/#get-searchimclose}
 #' @export
 #' @examples
 #' \dontrun{
-#'
+#'   m_search_im_close(lat=46.804159, lon=7.166325, distance=50)
 #' }
 m_search_im_close <- function(lat, lon, distance, 
   start_time, end_time, min_ca, max_ca, 
