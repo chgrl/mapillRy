@@ -102,13 +102,29 @@ m_search_im_close <- function(lat, lon, distance,
 	if(missing(lat) || missing(lon)) stop("'lat' and 'lon' are mandatory parameters.") 
 	if(!is.numeric(lat) || !is.numeric(lon)) stop("'lat' and 'lon' must be specified in decimal degrees.")
 	if(lat < 0 || lat > 90 || lon < -180 || lon > 180) stop("'lat' and 'lon' must be specified in decimal degrees.")
+	if(!missing(distance)) {
+		if(!is.numeric(distance)) stop("'distance' must be numeric.")
+		if(distance < 0) stop("'distance' must have a positive value.")
+	}
+	if(!missing(start_time)) {
+		if(!is.numeric(start_time)) stop("'start_time' must be numeric.")
+		if(start_time <= 0) stop("'start_time' must have a positive value.")
+	}
+	if(!missing(end_time)) {
+		if(!is.numeric(end_time)) stop("'end_time' must be numeric.")
+		if(end_time <= 0) stop("'end_time' must have a positive value.")
+	}
+	if(!missing(start_time) && !missing(end_time)) {
+		start_time <- min(start_time, end_time)
+		end_time <- max(min_lon, end_time)
+	}
 	if(!missing(min_ca)) {
 		if(!is.numeric(min_ca)) stop("'min_ca' must be numeric.")
-		if(min_ca < 0 || min_ca > 360) stop("'min_ca' must be a value between 0 and 360.")
+		if(min_ca < 0 || min_ca > 360) stop("'min_ca' must have a value between 0 and 360.")
 	}
 	if(!missing(max_ca)) {
 		if(!is.numeric(max_ca)) stop("'max_ca' must be numeric.")
-		if(max_ca < 0 || max_ca > 360) stop("'max_ca' must be a value between 0 and 360.")
+		if(max_ca < 0 || max_ca > 360) stop("'max_ca' must have a value between 0 and 360.")
 	}
 	
 	# drop empty parameters
