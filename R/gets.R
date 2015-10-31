@@ -19,7 +19,7 @@
 #' search_im(min_lat=49.317328, max_lat=49.325832, 
 #'   min_lon=19.963211, max_lon=20.004066)
 #' }
-m_search_im <- function(min_lat, max_lat, min_lon, max_lon, 
+search_im <- function(min_lat, max_lat, min_lon, max_lon, 
   start_time, end_time, user, limit, page, print=TRUE) {
 	
 	# check parameters
@@ -93,9 +93,9 @@ m_search_im <- function(min_lat, max_lat, min_lon, max_lon,
 #' @export
 #' @examples
 #' \dontrun{
-#'   m_search_im_close(lat=46.804159, lon=7.166325, distance=50)
+#' search_im_close(lat=46.804159, lon=7.166325, distance=50)
 #' }
-m_search_im_close <- function(lat, lon, distance, 
+search_im_close <- function(lat, lon, distance, 
   start_time, end_time, min_ca, max_ca, 
   user, limit, page, print=TRUE) {
 	
