@@ -36,10 +36,11 @@ to_df <- function(lst) {
 	num_ims <- length(lst$ims)
 	if(num_ims==0) df <- NULL
 	else {
-		df <- as.data.frame(lst$ims[[1]], stringsAsFactors=FALSE)
+		lst_cln <- lapply(lst$ims, function(x) lapply(x, function(x) ifelse(is.null(x), "", x)))
+		df <- as.data.frame(lst_cln[[1]], stringsAsFactors=FALSE)
 		if(num_ims > 1) {
 			for(i in 2:num_ims) {
-				df <- rbind(df, as.data.frame(lst$ims[[i]], stringsAsFactors=FALSE))
+				df <- rbind(df, as.data.frame(lst_cln[[i]], stringsAsFactors=FALSE))
 			}
 		}
 	}
