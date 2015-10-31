@@ -117,7 +117,7 @@ m_search_im_close <- function(lat, lon, distance,
 	}
 	if(!missing(start_time) && !missing(end_time)) {
 		start_time <- min(start_time, end_time)
-		end_time <- max(min_lon, end_time)
+		end_time <- max(start_time, end_time)
 	}
 	if(!missing(min_ca)) {
 		if(!is.numeric(min_ca)) stop("'min_ca' must be numeric.")
