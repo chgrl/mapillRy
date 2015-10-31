@@ -16,7 +16,8 @@
 #' @export
 #' @examples
 #' \dontrun{
-#'   m_search_im(lat=46.804159, lon=7.166325)
+#' search_im(min_lat=49.317328, max_lat=49.325832, 
+#'   min_lon=19.963211, max_lon=20.004066)
 #' }
 m_search_im <- function(min_lat, max_lat, min_lon, max_lon, 
   start_time, end_time, user, limit, page, print=TRUE) {
