@@ -33,16 +33,23 @@ epoch_to_date <- function(epoch) {
 
 # convert list to data frame
 to_df <- function(lst) {
-	num_ims <- length(lst$ims)
-	if(num_ims==0) df <- NULL
-	else {
-		lst_cln <- lapply(lst$ims, function(x) lapply(x, function(x) ifelse(is.null(x), "", x)))
-		df <- as.data.frame(lst_cln[[1]], stringsAsFactors=FALSE)
-		if(num_ims > 1) {
-			for(i in 2:num_ims) {
-				df <- rbind(df, as.data.frame(lst_cln[[i]], stringsAsFactors=FALSE))
+	if(is.null(lst$key)) {	# multi-list
+		num_ims <- length(lst$ims)
+		if(num_ims==0) df <- NULL
+		else {
+			lst_cln <- lapply(lst$ims, function(x) lapply(x, function(x) ifelse(is.null(x), "", x)))
+			df <- as.data.frame(lst_cln[[1]], stringsAsFactors=FALSE)
+			if(num_ims > 1) {
+				for(i in 2:num_ims) {
+					df <- rbind(df, as.data.frame(lst_cln[[i]], stringsAsFactors=FALSE))
+				}
 			}
 		}
+	} else {	# single-list
+		lst_cln <- lapply(lst, function(x) ifelse(is.null(x), "", x))
+		df <- as.data.frame(lst_cln, stringsAsFactors=FALSE)
 	}
+	
 	return(df)
 }
+
