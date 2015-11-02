@@ -150,3 +150,27 @@ search_im_close <- function(lat, lon, distance,
   invisible(df)
 }
 
+
+#' @title Get random image
+#' @description Get a random image from the Mapillary image archive, 
+#' the images is randomized from a set of curated images.
+#'
+#' @param print if \code{TRUE} (default) the search results are printed.
+#' @return A \code{data.frame} of the random image.
+#' @source \url{https://a.mapillary.com/#get-searchimrandomselected}
+#' @export
+#' @examples
+#' \dontrun{
+#' search_im_random()
+#' }
+search_im_random <- function(print=TRUE) {
+	
+	# make request
+  res <- m_get_url(path="search/im/randomselected")
+  raw <- m_parse(res)
+  df <- to_df(raw)
+  
+  # return
+  if(print) print(df)
+  invisible(df)
+}
