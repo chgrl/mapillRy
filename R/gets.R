@@ -174,3 +174,32 @@ search_im_random <- function(print=TRUE) {
   if(print) print(df)
   invisible(df)
 }
+
+
+#' @title Search for usernames
+#' @description Search for usernames.
+#'
+#' @param user String to try to match for a username.
+#' @param print if \code{TRUE} (default) the search results are printed.
+#' @return A \code{data.frame} of the matching usernames.
+#' @source \url{https://a.mapillary.com/#get-searchu}
+#' @export
+#' @examples
+#' \dontrun{
+#' search_user("mynameis")
+#' }
+search_user <- function(user, print=TRUE) {
+	
+	# check parameter
+	if(missing(user)) stop("'user' is mandatory.")
+	if(!is.character(user)) stop("Please specify 'user' as string.")
+	
+	# make request
+  res <- m_get_url(path="search/u", match=user)
+  raw <- m_parse(res)
+  df <- to_df(raw, "search_user")
+  
+  # return
+  if(print) print(df)
+  invisible(df)
+}

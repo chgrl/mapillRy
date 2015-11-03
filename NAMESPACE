@@ -3,6 +3,7 @@
 export(search_im)
 export(search_im_close)
 export(search_im_random)
+export(search_user)
 import(brew)
 import(grDevices)
 import(methods)
