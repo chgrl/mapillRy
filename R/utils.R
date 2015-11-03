@@ -32,8 +32,27 @@ epoch_to_date <- function(epoch) {
 
 
 # convert list to data frame
-to_df <- function(lst) {
-	if(is.null(lst$key)) {	# multi-list
+to_df <- function(lst, from) {
+	if(from=="search_im_random") {
+		lst_cln <- lapply(lst, function(x) ifelse(is.null(x), "", x))
+		df <- as.data.frame(lst_cln, stringsAsFactors=FALSE)
+	} else if(from=="search_user") {
+		num_user <- length(lst$matches)
+		if(num_user==0) df <- NULL
+		else {
+			df <- as.data.frame(lst$matches[[1]], stringsAsFactors=FALSE)
+			if(is.null(df$avatar)) df$avatar <- FALSE
+			else df$avatar <- TRUE
+			if(num_user > 1) {
+				for(i in 2: num_user) {
+					usr <- as.data.frame(lst$matches[[i]], stringsAsFactors=FALSE)
+					if(is.null(usr$avatar)) usr$avatar <- FALSE
+					else usr$avatar <- TRUE
+					df <- rbind(df, usr)
+				}
+			}
+		}
+	} else {	
 		num_ims <- length(lst$ims)
 		if(num_ims==0) df <- NULL
 		else {
@@ -45,9 +64,6 @@ to_df <- function(lst) {
 				}
 			}
 		}
-	} else {	# single-list
-		lst_cln <- lapply(lst, function(x) ifelse(is.null(x), "", x))
-		df <- as.data.frame(lst_cln, stringsAsFactors=FALSE)
 	}
 	
 	return(df)

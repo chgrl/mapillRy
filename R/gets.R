@@ -65,7 +65,7 @@ search_im <- function(min_lat, max_lat, min_lon, max_lon,
   res <- m_get_url(path="search/im", min_lat=min_lat, max_lat=max_lat, min_lon=min_lon, max_lon=max_lon, 
     start_time=start_time, end_time=end_time, user=user, limit=limit, page=page)
   raw <- m_parse(res)
-  df <- to_df(raw)
+  df <- to_df(raw, "search_im")
   
   # return
   if(print) print(df)
@@ -143,7 +143,7 @@ search_im_close <- function(lat, lon, distance,
     start_time=start_time, end_time=end_time, min_ca=min_ca, max_ca=max_ca, 
 		user=user, limit=limit, page=page)
   raw <- m_parse(res)
-  df <- to_df(raw)
+  df <- to_df(raw, "search_im_close")
   
   # return
   if(print) print(df)
@@ -168,7 +168,7 @@ search_im_random <- function(print=TRUE) {
 	# make request
   res <- m_get_url(path="search/im/randomselected")
   raw <- m_parse(res)
-  df <- to_df(raw)
+  df <- to_df(raw, "search_im_random")
   
   # return
   if(print) print(df)
