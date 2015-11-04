@@ -53,10 +53,10 @@ to_df <- function(lst, from) {
 			}
 		}
 	} else {	
-		num_ims <- length(lst$ims)
+		num_ims <- length(lst[[2]])
 		if(num_ims==0) df <- NULL
 		else {
-			lst_cln <- lapply(lst$ims, function(x) lapply(x, function(x) ifelse(is.null(x), "", x)))
+			lst_cln <- lapply(lst[[2]], function(x) lapply(x, function(x) ifelse(is.null(x), "", x)))
 			df <- as.data.frame(lst_cln[[1]], stringsAsFactors=FALSE)
 			if(num_ims > 1) {
 				for(i in 2:num_ims) {

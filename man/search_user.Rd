@@ -22,7 +22,7 @@ Search for usernames.
 }
 \examples{
 \dontrun{
-search_user("name")
+search_user("mynameis")
 }
 }
 
