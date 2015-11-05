@@ -41,17 +41,19 @@ to_df <- function(lst, from) {
 		if(num_user==0) df <- NULL
 		else {
 			df <- as.data.frame(lst$matches[[1]], stringsAsFactors=FALSE)
-			if(is.null(df$avatar)) df$avatar <- FALSE
-			else df$avatar <- TRUE
+			if(!is.null(df$avatar)) df$avatar <- NULL
 			if(num_user > 1) {
 				for(i in 2: num_user) {
 					usr <- as.data.frame(lst$matches[[i]], stringsAsFactors=FALSE)
-					if(is.null(usr$avatar)) usr$avatar <- FALSE
-					else usr$avatar <- TRUE
+					if(!is.null(usr$avatar)) usr$avatar <- NULL
 					df <- rbind(df, usr)
 				}
 			}
 		}
+	} else if(from=="stats_im") {
+		df <- as.data.frame(lst, stringsAsFactors=FALSE)
+	} else if(from=="stats_top") {
+		df <- lst
 	} else {	
 		num_ims <- length(lst[[2]])
 		if(num_ims==0) df <- NULL

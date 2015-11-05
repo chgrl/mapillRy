@@ -282,3 +282,63 @@ search_user <- function(user, print=TRUE) {
   if(print) print(df)
   invisible(df)
 }
+
+
+
+#' @title Statistics about images in the Mapillary system
+#' @description Retrieve statistics about images in the Mapillary system.
+#'
+#' @param print if \code{TRUE} (default) the statistics are printed.
+#' @return A \code{data.frame} with basic statistics.
+#' @source \url{https://a.mapillary.com/#get-statsim}
+#' @export
+#' @examples
+#' \dontrun{
+#' stats_im()
+#' }
+stats_im <- function(print=TRUE) {
+	
+	# make request
+  res <- m_get_url(path="stats/im")
+  raw <- m_parse(res)
+  df <- to_df(raw, "stats_im")
+  
+  # return
+  if(print) print(df)
+  invisible(df)
+}
+
+
+
+#' @title Top lists statistics for Mapillary
+#' @description Retrieve weekly and total top lists for Mapillary.
+#'
+#' @param cname Name of country for stats (optional - if not added whole world is assumed).
+#' @param limit Number of users in every list (default 10, optional).
+#' @param print if \code{TRUE} (default) the statistics are printed.
+#' @return A \code{list} of two \code{data.frame}s, one for each toplist.
+#' @source \url{https://a.mapillary.com/#get-statsimtoplist}
+#' @export
+#' @examples
+#' \dontrun{
+#' stats_top("namibia")
+#' }
+stats_top <- function(cname, limit, print=TRUE) {
+	
+	# check parameter
+	if(!missing(cname)) if(!is.character(cname)) stop("Please specify 'cname' as string.")
+	if(!missing(limit)) if(is.numeric(limit)) stop("Please specify 'limit' as integer.")
+	
+	# drop empty parameters
+	if(missing(cname)) cname <- NULL
+	if(missing(limit)) limit <- NULL
+	
+	# make request
+  res <- m_get_url(path="stats/im/toplist", cname=cname, limit=limit)
+  raw <- m_parse(res)
+  df <- to_df(raw, "stats_top")
+  
+  # return
+  if(print) print(df)
+  invisible(df)
+}
