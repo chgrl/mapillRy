@@ -1,8 +1,7 @@
 #' @title R Interface to the Mapillary API
-#' @description A wrapper for the Mapillary API, 
-#' available at \url{http://a.mapillary.com}. 'mapillRy' gives access to images, 
-#' image sequences and stats of Mapillary, a service for crowdsourcing map images. 
-#' A personal token is required for usage.
+#' @description A wrapper for the Mapillary API. 'mapillRy' gives access to images, 
+#' image sequences and stats of Mapillary, a service for crowdsourcing map images, 
+#' available at <https://www.mapillary.com>.
 #' @name mapillRy
 #' @docType package
 #' @importFrom httr GET
