@@ -334,7 +334,7 @@ stats_top <- function(cname, limit, print=TRUE) {
 	if(missing(limit)) limit <- NULL
 	
 	# make request
-  res <- m_get_url(path="stats/im/toplist", cname=cname, limit=limit)
+  res <- m_get_url(path="stats/toplist", cname=cname, limit=limit)
   raw <- m_parse(res)
   df <- to_df(raw, "stats_top")
   
