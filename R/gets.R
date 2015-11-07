@@ -327,7 +327,7 @@ stats_top <- function(cname, limit, print=TRUE) {
 	
 	# check parameter
 	if(!missing(cname)) if(!is.character(cname)) stop("Please specify 'cname' as string.")
-	if(!missing(limit)) if(is.numeric(limit)) stop("Please specify 'limit' as integer.")
+	if(!missing(limit)) if(!is.numeric(limit)) stop("Please specify 'limit' as integer.")
 	
 	# drop empty parameters
 	if(missing(cname)) cname <- NULL
