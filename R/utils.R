@@ -53,7 +53,14 @@ to_df <- function(lst, from) {
 	} else if(from=="stats_im") {
 		df <- as.data.frame(lst, stringsAsFactors=FALSE)
 	} else if(from=="stats_top") {
-		df <- lst
+		#toplist <- lst$toplist
+		total <- lst$total
+		total_count <- lst$total_count
+		df_total <- as.data.frame(total[[1]], stringsAsFactors=FALSE)
+		for(i in 2:length(total)) {
+			df_total <- rbind(df_total, as.data.frame(total[[i]], stringsAsFactors=FALSE))
+		}
+		df <- list(total=df_total, total_count=total_count)
 	} else {	
 		num_ims <- length(lst[[2]])
 		if(num_ims==0) df <- NULL
