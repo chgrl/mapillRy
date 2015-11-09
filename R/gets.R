@@ -153,6 +153,82 @@ search_im_close <- function(lat, lon, distance,
 
 
 
+#' @title Search for commented images
+#' @description Search for images that have at least one comment in an area.
+#'
+#' @param min_lat Minimum latitude.
+#' @param max_lat Maximum latitude.
+#' @param min_lon Minimum longitude.
+#' @param max_lon Maximum longitude.
+#' @param start_time Start time in EPOCH ms.
+#' @param end_time End time in EPOCH ms.
+#' @param user Just objects for specific user.
+#' @param limit Results per page in pagination.
+#' @param page Page number in pagination.
+#' @param print if \code{TRUE} (default) the search results are printed.
+#' @return A \code{data.frame} of matching images.
+#' @source \url{https://a.mapillary.com/#get-searchimcm}
+#' @export
+#' @examples
+#' \dontrun{
+#' search_im_cm(min_lat=41.31995, max_lat=41.32001, 
+#'   min_lon=19.79985, max_lon=19.79995)
+#' }
+search_im_cm <- function(min_lat, max_lat, min_lon, max_lon, 
+  start_time, end_time, user, limit, page, print=TRUE) {
+	
+	# check parameters
+	if(missing(min_lat) && missing(max_lat)) stop("At least one of 'min_lat' and 'max_lat' is required.")
+	if(missing(min_lon) && missing(max_lon)) stop("At least one of 'min_lon' and 'max_lon' is required.") 
+	if(!missing(min_lat)) {
+		if(!is.numeric(min_lat)) stop("'min_lat' must be specified in decimal degrees.")
+		if(min_lat < 0 || min_lat > 90) stop("'min_lat' must have a value between 0 and 90.")
+	}
+	if(!missing(max_lat)) {
+		if(!is.numeric(max_lat)) stop("'max_lat' must be specified in decimal degrees.")
+		if(max_lat < 0 || max_lat > 90) stop("'max_lat' must have a value between 0 and 90.")
+	}
+	if(!missing(min_lon)) {
+		if(!is.numeric(min_lon)) stop("'min_lon' must be specified in decimal degrees.")
+		if(min_lon < -180 || min_lon > 180) stop("'min_lon' must have a value between -180 and 180.")
+	}
+	if(!missing(max_lon)) {
+		if(!is.numeric(max_lon)) stop("'max_lon' must be specified in decimal degrees.")
+		if(max_lon < -180 || max_lon > 180) stop("'max_lon' must have a value between -180 and 180.")
+	}
+	if(!missing(min_lat) && !missing(max_lat)) {
+		min_lat <- min(min_lat, max_lat)
+		max_lat <- max(min_lat, max_lat)
+	}
+	if(!missing(min_lon) && !missing(max_lon)) {
+		min_lon <- min(min_lon, max_lon)
+		max_lon <- max(min_lon, max_lon)
+	}
+	
+	# drop empty parameters
+	if(missing(min_lat)) min_lat <- NULL
+	if(missing(max_lat)) max_lat <- NULL
+	if(missing(min_lon)) min_lon <- NULL
+	if(missing(max_lon)) max_lon <- NULL
+	if(missing(start_time)) start_time <- NULL
+	if(missing(end_time)) end_time <- NULL
+	if(missing(user)) user <- NULL
+	if(missing(limit)) limit <- NULL
+	if(missing(page)) page <- NULL
+	
+	# make request
+  res <- m_get_url(path="search/im/cm", min_lat=min_lat, max_lat=max_lat, min_lon=min_lon, max_lon=max_lon, 
+    start_time=start_time, end_time=end_time, user=user, limit=limit, page=page)
+  raw <- m_parse(res)
+  df <- to_df(raw, "search_im_cm")
+  
+  # return
+  if(print) print(df)
+  invisible(df)
+}
+
+
+
 #' @title Search for sequences
 #' @description Search for sequences.
 #'

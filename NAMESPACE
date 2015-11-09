@@ -2,6 +2,7 @@
 
 export(search_im)
 export(search_im_close)
+export(search_im_cm)
 export(search_im_random)
 export(search_seq)
 export(search_user)

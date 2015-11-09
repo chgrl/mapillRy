@@ -61,6 +61,8 @@ to_df <- function(lst, from) {
 			df_total <- rbind(df_total, as.data.frame(total[[i]], stringsAsFactors=FALSE))
 		}
 		df <- list(total=df_total, total_count=total_count)
+	} else if(from=="search_im_cm") {
+		df <- lst
 	} else {	
 		num_ims <- length(lst[[2]])
 		if(num_ims==0) df <- NULL
