@@ -6,9 +6,11 @@
 \alias{mapillRy-package}
 \title{R Interface to the Mapillary API}
 \description{
-A wrapper for the Mapillary API,
-available at \url{http://a.mapillary.com}. 'mapillRy' gives access to images,
-image sequences and stats of Mapillary, a service for crowdsourcing map images.
-A personal token is required for usage.
+A wrapper for the Mapillary API. 'mapillRy' gives access to images,
+image sequences and stats of Mapillary, a service for crowdsourcing map images:
+<https://www.mapillary.com>.
+
+Mapillary images are available under the Creative Commons Attribution-ShareAlike 4.0
+International License (CC BY-SA 4.0).
 }
 
