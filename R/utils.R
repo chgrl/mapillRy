@@ -25,8 +25,8 @@ m_parse <- function(res) {
 
 # format timestamp
 epoch_to_date <- function(epoch) {
-	date <- as.POSIXct(epoch, origin="1970-01-01")
-  date_form <- strftime(date, "YYYY-MM-DD %H:%M:%S")
+	date <- as.POSIXct(epoch/1000, origin="1970-01-01")
+  date_form <- strftime(date, "%Y-%m-%d %H:%M:%S")
   return(date_form)
 }
 
