@@ -1,6 +1,6 @@
 # make request
 m_get_url <- function(path, ...) {
-	res <- GET("https://a.mapillary.com", path=paste0("v2/", path), query=list(client_id="QmpJMFpwR09HVG9NdV9lZHo2ZlFGQTo1YjkyNzcwMjkxYjhiZGY4", ...))
+	res <- GET("https://a.mapillary.com", path=paste0("v2/", path), query=list(client_id="QmpJMFpwR09HVG9NdV9lZHo2ZlFGQTpiZDUzNzRiYTc5NWRiYzc3", ...))
 	message("Request: ", res$url) # for debugging
 	m_check(res)
 	return(res)
@@ -23,11 +23,30 @@ m_parse <- function(res) {
 }
 
 
-# format timestamp
+# convert timestamp to date
 epoch_to_date <- function(epoch) {
 	date <- as.POSIXct(epoch/1000, origin="1970-01-01")
   date_form <- strftime(date, "%Y-%m-%d %H:%M:%S")
   return(date_form)
+}
+
+
+# convert timestamp to epoch
+date_to_epoch <- function(date) {
+	if(nchar(date)==19) {
+		if(length(grep("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", date))!=1) stop("Cannot read 'start_time'/'end_time'")
+	} else if(nchar(date)==16) {
+		if(length(grep("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}", date))!=1) stop("Cannot read 'start_time'/'end_time'")
+		date <- paste0(date, ":00")
+	} else if(nchar(date)==13) {
+		if(length(grep("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}", date))!=1) stop("Cannot read 'start_time'/'end_time'")
+		date <- paste0(date, ":00:00")
+	} else if(nchar(date)==10) {
+		if(length(grep("[0-9]{4}-[0-9]{2}-[0-9]{2}", date))!=1) stop("Cannot read 'start_time'/'end_time'")
+		date <- paste0(date, " 00:00:00")
+	} else stop("'start_time' and 'end_time' must be specified as ISO date")
+	epoch <- as.character(as.numeric(strptime(date, "%Y-%m-%d %H:%M:%S"))*1000)
+	return(epoch)
 }
 
 
