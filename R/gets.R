@@ -75,7 +75,7 @@ search_im <- function(min_lat, max_lat, min_lon, max_lon,
 
 
 #' @title Search for images close to location
-#' @description Get images close to a certain point defined my longitude, latitude, 
+#' @description Get images close to a certain point defined by longitude, latitude, 
 #' max angle, min angle and a radius in meters.
 #'
 #' @param lat Latitude to search in circle from.

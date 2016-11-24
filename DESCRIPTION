@@ -1,11 +1,13 @@
 Package: mapillRy
 Type: Package
 Title: R Interface to the Mapillary API
-Version: 0.1-0
-Date: 2015-10-21
+Version: 0.1-1
+Date: 2016-11-24
 Author: Christian Graul
 Maintainer: Christian Graul <christian.graul@gmail.com>
-Description: A wrapper for the Mapillary API. 'mapillRy' gives access to images, image sequences and stats of Mapillary, a service for crowdsourcing map images, available at <https://www.mapillary.com>.
+Description: A wrapper for the Mapillary API. 'mapillRy' gives access to images,
+    image sequences and stats of Mapillary, a service for crowdsourcing map images,
+    available at <https://www.mapillary.com>.
 URL: https://github.com/chgrl/mapillRy
 License: MIT + file LICENSE
 Imports:
