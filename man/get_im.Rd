@@ -16,7 +16,7 @@ get_im(key, size = "m", save)
 \code{m[edium]} (640px, the default), \code{l[arge]} (1024px) 
 or \code{h[uge]} (2048px).}
 
-\item{save}{Directory where to save the image file.}
+\item{save}{Directory where to save the image file (optional).}
 }
 \value{
 An image.
@@ -26,7 +26,9 @@ Get and view images.
 }
 \examples{
 \dontrun{
-search_im(key=, size="m")
+img <- search_im_close(lat=46.804159, lon=7.166325, 
+  distance=10000, limit=1, print=FALSE)$key
+get_im(key=img, size="m")
 }
 }
 
