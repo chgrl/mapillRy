@@ -428,13 +428,15 @@ stats_top <- function(cname, limit, print=TRUE) {
 #' @param size Image size. One of \code{s[mall]} (320px), 
 #' \code{m[edium]} (640px, the default), \code{l[arge]} (1024px) 
 #' or \code{h[uge]} (2048px).
-#' @param save Directory where to save the image file.
+#' @param save Directory where to save the image file (optional).
 #' @return An image.
 #' @source \url{https://a.mapillary.com/#images}
 #' @export
 #' @examples
 #' \dontrun{
-#' search_im(key=, size="m")
+#' img <- search_im_close(lat=46.804159, lon=7.166325, 
+#'   distance=10000, limit=1, print=FALSE)$key
+#' get_im(key=img, size="m")
 #' }
 get_im <- function(key, size="m", save) {
   
@@ -455,7 +457,7 @@ get_im <- function(key, size="m", save) {
   download.file(img_url, img_path, quiet=TRUE, mode="wb")
   
   # display image
-  img <- readJPEG(img_file, native=TRUE)
+  img <- readJPEG(img_path, native=TRUE)
   plot(0:1, 0:1, type="n", ann=FALSE, axes=FALSE)
   rasterImage(img, 0, 0, 1, 1)
 }
