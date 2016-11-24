@@ -418,3 +418,44 @@ stats_top <- function(cname, limit, print=TRUE) {
   if(print) print(df)
   invisible(df)
 }
+
+
+
+#' @title Get images
+#' @description Get and view images.
+#'
+#' @param key Image key.
+#' @param size Image size. One of \code{s[mall]} (320px), 
+#' \code{m[edium]} (640px, the default), \code{l[arge]} (1024px) 
+#' or \code{h[uge]} (2048px).
+#' @param save Directory where to save the image file.
+#' @return An image.
+#' @source \url{https://a.mapillary.com/#images}
+#' @export
+#' @examples
+#' \dontrun{
+#' search_im(key=, size="m")
+#' }
+get_im <- function(key, size="m", save) {
+  
+  # check parameters
+  if(!missing(key)) if(!is.character(key)) stop("Please specify 'key' as string.")
+  if(!missing(size)) if(!is.character(size)) stop("Please specify 'size' as string.")
+  if(!missing(save)) if(!is.character(save)) stop("Please specify 'save' as string.")
+  
+  # prepare url
+  avail_sizes <- c("small", "medium", "large", "huge")
+  sizes <- c(320, 640, 1024, 2048)
+  size <- sizes[pmatch(size, avail_sizes)]
+  img_url <- paste0("https://d1cuyjsrcm0gby.cloudfront.net/", key, "/thumb-", size, ".jpg")
+  
+  # download image
+  if(missing(save)) save <- tempdir()
+  img_path <- file.path(save, paste(key, "jpg", sep="."))
+  download.file(img_url, img_path, quiet=TRUE, mode="wb")
+  
+  # display image
+  img <- readJPEG(img_file, native=TRUE)
+  plot(0:1, 0:1, type="n", ann=FALSE, axes=FALSE)
+  rasterImage(img, 0, 0, 1, 1)
+}

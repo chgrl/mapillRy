@@ -8,4 +8,12 @@ Maintainer: Christian Graul <christian.graul@gmail.com>
 Description: A wrapper for the Mapillary API. 'mapillRy' gives access to images, image sequences and stats of Mapillary, a service for crowdsourcing map images, available at <https://www.mapillary.com>.
 URL: https://github.com/chgrl/mapillRy
 License: MIT + file LICENSE
-Imports: brew, grDevices, httr, jsonlite, methods, utils
+Imports:
+    brew,
+    grDevices,
+    httr,
+    jpeg,
+    jsonlite,
+    methods,
+    utils
+RoxygenNote: 5.0.1

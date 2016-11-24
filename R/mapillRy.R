@@ -9,6 +9,7 @@
 #' @docType package
 #' @importFrom httr GET
 #' @importFrom httr content
+#' @importFrom jpeg readJPEG
 #' @importFrom jsonlite fromJSON
 #' @import brew
 #' @import grDevices
