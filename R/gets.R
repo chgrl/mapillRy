@@ -422,13 +422,14 @@ stats_top <- function(cname, limit, print=TRUE) {
 
 
 #' @title Get images
-#' @description Get and view images.
+#' @description Save images and display images in R.
 #'
 #' @param key Image key.
 #' @param size Image size. One of \code{s[mall]} (320px), 
 #' \code{m[edium]} (640px, the default), \code{l[arge]} (1024px) 
 #' or \code{h[uge]} (2048px).
-#' @param save Directory where to save the image file (optional).
+#' @param save Directory where to save the image file. Optional --
+#' if missing, the image is saved as temporary file and diplayed.
 #' @return An image.
 #' @source \url{https://a.mapillary.com/#images}
 #' @export
@@ -452,7 +453,11 @@ get_im <- function(key, size="m", save) {
   img_url <- paste0("https://d1cuyjsrcm0gby.cloudfront.net/", key, "/thumb-", size, ".jpg")
   
   # download image
-  if(missing(save)) save <- tempdir()
+  rtrn <- FALSE
+  if(missing(save)) {
+    save <- tempdir()
+    rtrn <- TRUE
+  }
   img_path <- file.path(save, paste(key, "jpg", sep="."))
   download.file(img_url, img_path, quiet=TRUE, mode="wb")
   
@@ -460,4 +465,7 @@ get_im <- function(key, size="m", save) {
   img <- readJPEG(img_path, native=TRUE)
   plot(0:1, 0:1, type="n", ann=FALSE, axes=FALSE)
   rasterImage(img, 0, 0, 1, 1)
+}  
+  # return image path
+  if(rtrn) invisible(img_path)
 }

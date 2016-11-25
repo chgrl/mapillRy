@@ -16,7 +16,8 @@ get_im(key, size = "m", save)
 \code{m[edium]} (640px, the default), \code{l[arge]} (1024px) 
 or \code{h[uge]} (2048px).}
 
-\item{save}{Directory where to save the image file (optional).}
+\item{save}{Directory where to save the image file. Optional --
+if missing, the image is saved as temporary file and diplayed.}
 }
 \value{
 An image.
