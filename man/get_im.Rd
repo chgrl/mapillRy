@@ -23,7 +23,7 @@ if missing, the image is saved as temporary file and diplayed.}
 An image.
 }
 \description{
-Get and view images.
+Save images and display images in R.
 }
 \examples{
 \dontrun{

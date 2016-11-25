@@ -465,7 +465,51 @@ get_im <- function(key, size="m", save) {
   img <- readJPEG(img_path, native=TRUE)
   plot(0:1, 0:1, type="n", ann=FALSE, axes=FALSE)
   rasterImage(img, 0, 0, 1, 1)
-}  
+  
   # return image path
   if(rtrn) invisible(img_path)
+}
+
+
+
+#' @title View images
+#' @description View images online.
+#'
+#' @param key Image key.
+#' @param mode Image view mode. Use \code{m[apillary]} (the default), 
+#' to open the image in the mapillary website image view. 
+#' Use \code{[d]irect}, to open the direct image link. 
+#' @param size Image size. Used only for \code{direct} image view mode.
+#' One of \code{s[mall]} (320px), \code{m[edium]} (640px, the default), 
+#' \code{l[arge]} (1024px) or \code{h[uge]} (2048px).
+#' @return An image.
+#' @source \url{https://a.mapillary.com/#images}
+#' @export
+#' @examples
+#' \dontrun{
+#' img <- search_im_close(lat=46.804159, lon=7.166325, 
+#'   distance=10000, limit=1, print=FALSE)$key
+#' view_im(key=img)
+#' }
+view_im <- function(key, mode="m", size="m") {
+  
+  # check parameters
+  if(!missing(key)) if(!is.character(key)) stop("Please specify 'key' as string.")
+  if(!missing(mode)) if(!is.character(size)) stop("Please specify 'mode' as string.")
+  if(!missing(size)) if(!is.character(save)) stop("Please specify 'size' as string.")
+  
+  # prepare url
+  avail_modes <- c("mapillary", "direct")
+  mode <- avail_modes[pmatch(mode, avail_modes)]
+  if(mode=="direct") {
+    img_url <- paste0("https://d1cuyjsrcm0gby.cloudfront.net/", key, "/thumb-", size, ".jpg")
+  } else {
+    img_url <- paste0("http://www.mapillary.com/map/im/", key)
+  }
+    
+  # browse image
+  browseURL(img_url)
+  
+  # return image path
+  invisible(img_url)
 }
