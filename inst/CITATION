@@ -1,0 +1,12 @@
+citHeader("To cite package 'mapillRy' in publications use:")
+
+citEntry(entry = "Manual",
+         title = "mapillRy: R Interface to the Mapillary API",
+         author = "Christian Graul",
+         year = "2016",
+         url = "https://cran.r-project.org/package=mapillRy",
+         note = "R package version 0.1-1",
+         textVersion = "Graul, Christian (2016): mapillRy: R Interface to the Mapillary API. R package version 0.1-1, https://cran.r-project.org/package=mapillRy.")
+
+citFooter("Please cite both 'mapillRy' and R when using 'mapillRy'.",
+          "For R citation, see ", sQuote("citation()"))
