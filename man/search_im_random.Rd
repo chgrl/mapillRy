@@ -19,6 +19,9 @@ A \code{data.frame} of the random image.
 Get a random image from the Mapillary image archive, 
 the images is randomized from a set of curated images.
 }
+\note{
+This request might fail irregularly (HTTP error 404).
+}
 \examples{
 \dontrun{
 search_im_random()

@@ -312,6 +312,7 @@ search_seq <- function(min_lat, max_lat, min_lon, max_lon,
 #' @param print if \code{TRUE} (default) the search results are printed.
 #' @return A \code{data.frame} of the random image.
 #' @source \url{https://a.mapillary.com/#get-searchimrandomselected}
+#' @note This request might fail irregularly (HTTP error 404).
 #' @export
 #' @examples
 #' \dontrun{
