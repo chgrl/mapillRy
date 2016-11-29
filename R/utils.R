@@ -81,7 +81,52 @@ to_df <- function(lst, from) {
 		}
 		df <- list(total=df_total, total_count=total_count)
 	} else if(from=="search_im_cm") {
-		df <- lst
+	  num_ims <- length(lst[[2]])
+	  if(num_ims==0) df <- NULL
+	  else {
+	    im <- lst[[2]][[1]]
+	    num_cm <- length(im$comments)
+	    im_key <- im$key
+	    comment <- im$comments[[1]]$comment
+	    created_at <- im$comments[[1]]$created_at
+	    cm_key <- im$comments[[1]]$key
+	    user <- im$comments[[1]]$user
+	    df <- data.frame(im_key=im_key, comment=comment, created_at=created_at, cm_key=cm_key, user=user, stringsAsFactors=FALSE)
+	    if(num_cm > 1) {
+	      for(i in 2:num_cm) {
+	        num_cm <- im$comments
+	        im_key <- im$key
+	        comment <- im$comments[[i]]$comment
+	        created_at <- im$comments[[i]]$created_at
+	        cm_key <- im$comments[[i]]$key
+	        user <- im$comments[[i]]$user
+	        df <- rbind(df, data.frame(im_key=im_key, comment=comment, created_at=created_at, cm_key=cm_key, user=user, stringsAsFactors=FALSE))
+	      }
+	    }
+	    if(num_ims > 1) {
+	      for(i in 2:num_ims) {
+	        im <- lst[[2]][[i]]
+	        num_cm <- im$comments
+	        im_key <- im$key
+	        comment <- im$comments[[1]]$comment
+	        created_at <- im$comments[[1]]$created_at
+	        cm_key <- im$comments[[1]]$key
+	        user <- im$comments[[1]]$user
+	        df <- rbind(df, data.frame(im_key=im_key, comment=comment, created_at=created_at, cm_key=cm_key, user=user, stringsAsFactors=FALSE))
+	        if(num_cm > 1) {
+	          for(i in 2:num_cm) {
+	            num_cm <- im$comments
+	            im_key <- im$key
+	            comment <- im$comments[[i]]$comment
+	            created_at <- im$comments[[i]]$created_at
+	            cm_key <- im$comments[[i]]$key
+	            user <- im$comments[[i]]$user
+	            df <- rbind(df, data.frame(im_key=im_key, comment=comment, created_at=created_at, cm_key=cm_key, user=user, stringsAsFactors=FALSE))
+	          }
+	        }
+	      }
+	    }
+	  }
 	} else {	
 		num_ims <- length(lst[[2]])
 		if(num_ims==0) df <- NULL
@@ -96,6 +141,14 @@ to_df <- function(lst, from) {
 		}
 	}
 	
+  # convert epoch to date
+  if(any(names(df)=="captured_at")) {
+    df$captured_at <- epoch_to_date(df$captured_at)
+  }
+  if(any(names(df)=="created_at")) {
+    df$created_at <- epoch_to_date(df$created_at)
+  }
+  
 	return(df)
 }
 
