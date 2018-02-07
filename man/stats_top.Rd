@@ -27,4 +27,3 @@ Retrieve weekly and total top lists for Mapillary.
 stats_top("namibia")
 }
 }
-

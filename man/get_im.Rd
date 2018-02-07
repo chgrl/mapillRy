@@ -30,6 +30,7 @@ Save images and display images in R.
 img <- search_im_close(lat=46.804159, lon=7.166325, 
   distance=10000, limit=1, print=FALSE)$key
 get_im(key=img, size="m")
+img.path <- get_im(key=img, size="h", save=getwd())
+img.path
 }
 }
-

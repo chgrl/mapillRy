@@ -11,8 +11,9 @@
 #' @importFrom httr content
 #' @importFrom jpeg readJPEG
 #' @importFrom jsonlite fromJSON
+#' @importFrom graphics plot
+#' @importFrom graphics rasterImage
 #' @import brew
-#' @import grDevices
 #' @import methods
 #' @import utils
 #' @aliases mapillRy mapillRy-package

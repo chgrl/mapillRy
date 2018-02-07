@@ -43,4 +43,3 @@ search_im_cm(min_lat=41.31995, max_lat=41.32001,
   min_lon=19.79985, max_lon=19.79995)
 }
 }
-

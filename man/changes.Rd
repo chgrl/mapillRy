@@ -17,4 +17,3 @@ changes(pkg = "mapillRy")
 changes()
 }
 }
-

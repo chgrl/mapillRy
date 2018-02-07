@@ -25,4 +25,3 @@ Search for usernames.
 search_user("mynameis")
 }
 }
-

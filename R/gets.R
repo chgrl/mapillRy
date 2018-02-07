@@ -1,72 +1,66 @@
 #' @title Search for images
 #' @description Search for images.
 #'
-#' @param min_lat Minimum latitude.
-#' @param max_lat Maximum latitude.
-#' @param min_lon Minimum longitude.
-#' @param max_lon Maximum longitude.
-#' @param start_time Start time in EPOCH ms.
-#' @param end_time End time in EPOCH ms.
-#' @param user Just objects for specific user.
-#' @param limit Results per page in pagination.
+#' @param bbox Bounding box, given as vector of minx, miny, maxx, maxy.
+#' @param closeto Location that images are close to, given as vector of longitude and latitude.
+#' @param radius Radius around the \code{closeto} location, given in meters (default 100).
+#' @param lookat Location in which direction images are taken (and therefore that location 
+#' is likely to be visible in the images), given as vector of longitude and latitude.
+#' @param start_time Start time images are captured (following ISO 8601 rules).
+#' @param end_time End time images are captured before (following ISO 8601 rules).
+#' @param user_name Just objects for specific users, given as vector of usernames.
+#' @param user_key Just objects for specific users, given as vector of user keys.
+#' @param project_key Just objects for specific projects, given as vector of project keys.
 #' @param page Page number in pagination.
+#' @param per_page Results per page in pagination.
+#' @param fields Partially selected output fields, given as string or vector of strings. 
+#' Available fields: \code{camera_angle}, \code{camera_make}, \code{camera_model}, 
+#' \code{captured_at}, \code{img_key}, \code{panorama}, \code{user_key}, \code{user_name}, 
+#' \code{longitude}, \code{latitude}. Default is all fields.
 #' @param print if \code{TRUE} (default) the search results are printed.
 #' @return A \code{data.frame} of matching images.
-#' @source \url{https://a.mapillary.com/#get-searchim}
+#' @source \url{https://a.mapillary.com/#images}
 #' @export
 #' @examples
 #' \dontrun{
-#' search_im(min_lat=49.317328, max_lat=49.325832, 
-#'   min_lon=19.963211, max_lon=20.004066)
+#' images(bbox=c(19.963211,49.317328,20.004066,49.325832), page=1, per_page=5)
 #' }
-search_im <- function(min_lat, max_lat, min_lon, max_lon, 
-  start_time, end_time, user, limit, page, print=TRUE) {
+images <- function(bbox, closeto, radius, lookat, 
+  start_time, end_time, user_name, user_key, project_key, 
+  page, per_page, fields, print=TRUE) {
 	
-	# check parameters
-	if(missing(min_lat) && missing(max_lat)) stop("At least one of 'min_lat' and 'max_lat' is required.")
-	if(missing(min_lon) && missing(max_lon)) stop("At least one of 'min_lon' and 'max_lon' is required.") 
-	if(!missing(min_lat)) {
-		if(!is.numeric(min_lat)) stop("'min_lat' must be specified in decimal degrees.")
-		if(min_lat < 0 || min_lat > 90) stop("'min_lat' must have a value between 0 and 90.")
-	}
-	if(!missing(max_lat)) {
-		if(!is.numeric(max_lat)) stop("'max_lat' must be specified in decimal degrees.")
-		if(max_lat < 0 || max_lat > 90) stop("'max_lat' must have a value between 0 and 90.")
-	}
-	if(!missing(min_lon)) {
-		if(!is.numeric(min_lon)) stop("'min_lon' must be specified in decimal degrees.")
-		if(min_lon < -180 || min_lon > 180) stop("'min_lon' must have a value between -180 and 180.")
-	}
-	if(!missing(max_lon)) {
-		if(!is.numeric(max_lon)) stop("'max_lon' must be specified in decimal degrees.")
-		if(max_lon < -180 || max_lon > 180) stop("'max_lon' must have a value between -180 and 180.")
-	}
-	if(!missing(min_lat) && !missing(max_lat)) {
-		min_lat <- min(min_lat, max_lat)
-		max_lat <- max(min_lat, max_lat)
-	}
-	if(!missing(min_lon) && !missing(max_lon)) {
-		min_lon <- min(min_lon, max_lon)
-		max_lon <- max(min_lon, max_lon)
-	}
-	
+  available_fields <- c("camera_angle", "camera_make", "camera_model", 
+                        "captured_at", "img_key", "panorama", 
+                        "user_key", "user_name", "longitude", "latitude")
+  
 	# drop empty parameters
-	if(missing(min_lat)) min_lat <- NULL
-	if(missing(max_lat)) max_lat <- NULL
-	if(missing(min_lon)) min_lon <- NULL
-	if(missing(max_lon)) max_lon <- NULL
+	if(missing(bbox)) bbox <- NULL
+	else bbox <- paste(bbox, collapse=",")
+	if(missing(closeto)) closeto <- NULL
+	else closeto <- paste(closeto, collapse=",")
+	if(missing(radius)) radius <- NULL
+	if(missing(lookat)) lookat <- NULL
+	else lookat <- paste(lookat, collapse=",")
 	if(missing(start_time)) start_time <- NULL
 	if(missing(end_time)) end_time <- NULL
-	if(missing(user)) user <- NULL
-	if(missing(limit)) limit <- NULL
+	if(missing(user_name)) user_name <- NULL
+	else user_name <- paste(user_name, collapse=",")
+	if(missing(user_key)) user_key <- NULL
+	else user_key <- paste(user_key, collapse=",")
+	if(missing(project_key)) project_key <- NULL
+	else project_key <- paste(project_key, collapse=",")
 	if(missing(page)) page <- NULL
+	if(missing(per_page)) per_page <- NULL
+	if(missing(fields)) fields <- available_fields
 	
 	# make request
-  res <- m_get_url(path="search/im", min_lat=min_lat, max_lat=max_lat, min_lon=min_lon, max_lon=max_lon, 
-    start_time=start_time, end_time=end_time, user=user, limit=limit, page=page)
-  raw <- m_parse(res)
-  df <- to_df(raw, "search_im")
-  
+	res <- m_get_url(path="images", bbox=bbox, closeto=closeto, radius=radius, lookat=lookat, 
+	                 start_time=start_time, end_time=end_time, 
+	                 usernames=user_name, userkeys=user_key, project_keys=project_key, 
+	                 page=page, per_page=per_page)
+	raw <- m_parse(res)
+	fields <- available_fields[grep(paste(fields, collapse="|"), available_fields)]
+  df <- to_df(raw, "images", fields)
   # return
   if(print) print(df)
   invisible(df)
@@ -439,6 +433,8 @@ stats_top <- function(cname, limit, print=TRUE) {
 #' img <- search_im_close(lat=46.804159, lon=7.166325, 
 #'   distance=10000, limit=1, print=FALSE)$key
 #' get_im(key=img, size="m")
+#' img.path <- get_im(key=img, size="h", save=getwd())
+#' img.path
 #' }
 get_im <- function(key, size="m", save) {
   

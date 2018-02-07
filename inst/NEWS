@@ -1,0 +1,12 @@
+mapillRy 0.1-1 [2016-11-25]
+---------------------------
+
+* new function 'get_im' to save and display images
+
+* new function 'view_im' to view images inline
+
+
+mapillRy 0.1-0 [2015-11-11]
+---------------------------
+
+* This is the first version

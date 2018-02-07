@@ -33,4 +33,3 @@ img <- search_im_close(lat=46.804159, lon=7.166325,
 view_im(key=img)
 }
 }
-

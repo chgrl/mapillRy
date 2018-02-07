@@ -23,4 +23,3 @@ Retrieve statistics about images in the Mapillary system.
 stats_im()
 }
 }
-

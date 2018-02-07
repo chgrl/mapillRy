@@ -43,4 +43,3 @@ search_seq(min_lat=49.019063, max_lat=49.328211,
   min_lon=-123.233919, max_lon=-122.298288)
 }
 }
-
