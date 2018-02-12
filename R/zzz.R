@@ -1,13 +1,23 @@
-.onAttach <- 
-function(libname, pkgname) {
-    ver <- read.dcf(file=system.file("DESCRIPTION", package=pkgname), fields="Version")
-    packageStartupMessage(" ")
-    packageStartupMessage(paste("This is", pkgname, ver))
-    packageStartupMessage(" ")
-    packageStartupMessage("Type changes(\"mapillRy\") to see changes/bug fixes, help(mapillRy) for documentation")
-    packageStartupMessage("or citation(\"mapillRy\") for how to cite mapillRy.")
-    packageStartupMessage(" ")
+.onAttach <- function(libname, pkgname) {
+  ver <- read.dcf(file=system.file("DESCRIPTION", package=pkgname), fields="Version")
+  packageStartupMessage(" ")
+  packageStartupMessage(paste("This is", pkgname, ver))
+  packageStartupMessage(" ")
+  packageStartupMessage("Type changes(\"mapillRy\") to see changes/bug fixes, help(mapillRy) for documentation")
+  packageStartupMessage("or citation(\"mapillRy\") for how to cite mapillRy.")
+  packageStartupMessage(" ")
 }
+
+
+
+.onLoad <- function(libname, pkgname) {
+  options(mapillRy.available.fields = c("camera_angle", "camera_make", "camera_model", 
+                                        "captured_at", "img_key", "panorama", 
+                                        "user_key", "user_name", "project_key", 
+                                        "longitude", "latitude"))
+}
+          
+
 
 
 #' @title View changes notes.
