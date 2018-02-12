@@ -6,6 +6,7 @@ m_get_url <- function(path, ...) {
 	return(res)
 }
 
+
 # check response
 m_check <- function(res) {
 	if(res$status_code < 400) return(invisible())
@@ -50,11 +51,21 @@ date_to_epoch <- function(date) {
 }
 
 
-# convert list to data frame
-to_df <- function(lst, from, fields) {
+# convert image list to data frame
+img_to_df <- function(lst, fields) {
 	num_ims <- length(lst[["features"]])
 	if(num_ims==0) df <- NULL
 	else {
+	  # set missing (optional) properties
+	  for(i in 1:num_ims) {
+	    if(is.null(lst[["features"]][[i]][["properties"]][["ca"]])) {
+	      lst[["features"]][[i]][["properties"]][["ca"]] <- NA
+	    }
+	    if(is.null(lst[["features"]][[i]][["properties"]][["project_key"]])) {
+	      lst[["features"]][[i]][["properties"]][["project_key"]] <- NA
+	    }
+	  }
+	  # get properties
 		ca <- unlist(sapply(lst[["features"]], function(x) x[["properties"]][["ca"]]))
 		camera_make <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["camera_make"]]))
 		camera_model <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["camera_model"]]))
@@ -66,14 +77,43 @@ to_df <- function(lst, from, fields) {
 		username <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["username"]]))
 		lon <- unlist(lapply(lst[["features"]], function(x) x[["geometry"]][["coordinates"]][[1]]))
 	  lat <- unlist(lapply(lst[["features"]], function(x) x[["geometry"]][["coordinates"]][[2]]))
-		df <- data.frame(camera_angle=ca, camera_make=camera_make, camera_model=camera_model, 
+	  df <- data.frame(camera_angle=ca, camera_make=camera_make, camera_model=camera_model, 
 		                 captured_at=captured_at, img_key=key, panorama=pano, 
-		                 user_key=user_key, user_name=username, 
+		                 user_key=user_key, user_name=username, project_key=project_key, 
 		                 longitude=lon, latitude=lat, 
 		                 stringsAsFactors=FALSE)
-		df <- df[,fields]
+		# select output
+	  df <- df[,fields]
 	}
 	
 	return(df)
 }
 
+
+# convert sequence list to data frame
+seq_to_df <- function(lst, fields) {
+  num_ims <- length(lst[["features"]])
+  if(num_ims==0) df <- NULL
+  else {
+    ca <- unlist(sapply(lst[["features"]], function(x) x[["properties"]][["ca"]]))
+    camera_make <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["camera_make"]]))
+    camera_model <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["camera_model"]]))
+    captured_at <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["captured_at"]]))
+    key <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["key"]]))
+    pano <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["pano"]]))
+    project_key <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["project_key"]]))
+    user_key <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["user_key"]]))
+    username <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["username"]]))
+    lon <- unlist(lapply(lst[["features"]], function(x) x[["geometry"]][["coordinates"]][[1]]))
+    lat <- unlist(lapply(lst[["features"]], function(x) x[["geometry"]][["coordinates"]][[2]]))
+
+    df <- data.frame(camera_angle=ca, camera_make=camera_make, camera_model=camera_model, 
+                     captured_at=captured_at, img_key=key, panorama=pano, 
+                     user_key=user_key, user_name=username, 
+                     longitude=lon, latitude=lat, 
+                     stringsAsFactors=FALSE)
+    df <- df[,fields]
+  }
+  
+  return(df)
+}
