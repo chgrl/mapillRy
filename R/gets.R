@@ -16,22 +16,20 @@
 #' @param fields Partially selected output fields, given as string or vector of strings. 
 #' Available fields: \code{camera_angle}, \code{camera_make}, \code{camera_model}, 
 #' \code{captured_at}, \code{img_key}, \code{panorama}, \code{user_key}, \code{user_name}, 
-#' \code{longitude}, \code{latitude}. Default is all fields.
+#' \code{longitude}, \code{latitude}. Default is all available fields.
 #' @param print if \code{TRUE} (default) the search results are printed.
 #' @return A \code{data.frame} of matching images.
 #' @source \url{https://a.mapillary.com/#images}
 #' @export
 #' @examples
 #' \dontrun{
-#' images(bbox=c(19.963211,49.317328,20.004066,49.325832), page=1, per_page=5)
+#' images(bbox=c(19.963211,49.317328,20.004066,49.325832), page=1, per_page=10)
 #' }
 images <- function(bbox, closeto, radius, lookat, 
   start_time, end_time, user_name, user_key, project_key, 
   page, per_page, fields, print=TRUE) {
 	
-  available_fields <- c("camera_angle", "camera_make", "camera_model", 
-                        "captured_at", "img_key", "panorama", 
-                        "user_key", "user_name", "longitude", "latitude")
+  available_fields <- getOption("mapillRy.available.fields")
   
 	# drop empty parameters
 	if(missing(bbox)) bbox <- NULL
@@ -60,270 +58,68 @@ images <- function(bbox, closeto, radius, lookat,
 	                 page=page, per_page=per_page)
 	raw <- m_parse(res)
 	fields <- available_fields[grep(paste(fields, collapse="|"), available_fields)]
-  df <- to_df(raw, "images", fields)
-  # return
+	df <- img_to_df(raw, fields)
+
+	# return
   if(print) print(df)
   invisible(df)
 }
-
-
-
-#' @title Search for images close to location
-#' @description Get images close to a certain point defined by longitude, latitude, 
-#' max angle, min angle and a radius in meters.
-#'
-#' @param lat Latitude to search in circle from.
-#' @param lon Longitude to search in circle from.
-#' @param distance Search radius in meters.
-#' @param start_time Start time in EPOCH ms.
-#' @param end_time End time in EPOCH ms.
-#' @param min_ca Minimum angle of image in degrees.
-#' @param max_ca Maximum angle of image in degrees.
-#' @param user Just objects for specific user.
-#' @param limit Results per page in pagination.
-#' @param page Page number in pagination.
-#' @param print if \code{TRUE} (default) the search results are printed.
-#' @return A \code{data.frame} of matching images.
-#' @source \url{https://a.mapillary.com/#get-searchimclose}
-#' @export
-#' @examples
-#' \dontrun{
-#' search_im_close(lat=46.804159, lon=7.166325, distance=50)
-#' }
-search_im_close <- function(lat, lon, distance, 
-  start_time, end_time, min_ca, max_ca, 
-  user, limit, page, print=TRUE) {
-	
-	# check parameters
-	if(missing(lat) || missing(lon)) stop("'lat' and 'lon' are mandatory parameters.") 
-	if(!is.numeric(lat) || !is.numeric(lon)) stop("'lat' and 'lon' must be specified in decimal degrees.")
-	if(lat < 0 || lat > 90 || lon < -180 || lon > 180) stop("'lat' and 'lon' must be specified in decimal degrees.")
-	if(!missing(distance)) {
-		if(!is.numeric(distance)) stop("'distance' must be numeric.")
-		if(distance < 0) stop("'distance' must have a positive value.")
-	}
-	if(!missing(start_time)) {
-		if(!is.numeric(start_time)) stop("'start_time' must be numeric.")
-		if(start_time <= 0) stop("'start_time' must have a positive value.")
-	}
-	if(!missing(end_time)) {
-		if(!is.numeric(end_time)) stop("'end_time' must be numeric.")
-		if(end_time <= 0) stop("'end_time' must have a positive value.")
-	}
-	if(!missing(start_time) && !missing(end_time)) {
-		start_time <- min(start_time, end_time)
-		end_time <- max(start_time, end_time)
-	}
-	if(!missing(min_ca)) {
-		if(!is.numeric(min_ca)) stop("'min_ca' must be numeric.")
-		if(min_ca < 0 || min_ca > 360) stop("'min_ca' must have a value between 0 and 360.")
-	}
-	if(!missing(max_ca)) {
-		if(!is.numeric(max_ca)) stop("'max_ca' must be numeric.")
-		if(max_ca < 0 || max_ca > 360) stop("'max_ca' must have a value between 0 and 360.")
-	}
-	
-	# drop empty parameters
-	if(missing(distance)) distance <- NULL
-	if(missing(start_time)) start_time <- NULL
-	if(missing(end_time)) end_time <- NULL
-	if(missing(min_ca)) min_ca <- NULL
-	if(missing(max_ca)) max_ca <- NULL
-	if(missing(user)) user <- NULL
-	if(missing(limit)) limit <- NULL
-	if(missing(page)) page <- NULL
-	
-	# make request
-  res <- m_get_url(path="search/im/close", lat=lat, lon=lon, distance=distance, 
-    start_time=start_time, end_time=end_time, min_ca=min_ca, max_ca=max_ca, 
-		user=user, limit=limit, page=page)
-  raw <- m_parse(res)
-  df <- to_df(raw, "search_im_close")
-  
-  # return
-  if(print) print(df)
-  invisible(df)
-}
-
-
-
-#' @title Search for commented images
-#' @description Search for images that have at least one comment in an area.
-#'
-#' @param min_lat Minimum latitude.
-#' @param max_lat Maximum latitude.
-#' @param min_lon Minimum longitude.
-#' @param max_lon Maximum longitude.
-#' @param start_time Start time in EPOCH ms.
-#' @param end_time End time in EPOCH ms.
-#' @param user Just objects for specific user.
-#' @param limit Results per page in pagination.
-#' @param page Page number in pagination.
-#' @param print if \code{TRUE} (default) the search results are printed.
-#' @return A \code{data.frame} of matching images.
-#' @source \url{https://a.mapillary.com/#get-searchimcm}
-#' @export
-#' @examples
-#' \dontrun{
-#' search_im_cm(min_lat=41.31995, max_lat=41.32001, 
-#'   min_lon=19.79985, max_lon=19.79995)
-#' }
-search_im_cm <- function(min_lat, max_lat, min_lon, max_lon, 
-  start_time, end_time, user, limit, page, print=TRUE) {
-	
-	# check parameters
-	if(missing(min_lat) && missing(max_lat)) stop("At least one of 'min_lat' and 'max_lat' is required.")
-	if(missing(min_lon) && missing(max_lon)) stop("At least one of 'min_lon' and 'max_lon' is required.") 
-	if(!missing(min_lat)) {
-		if(!is.numeric(min_lat)) stop("'min_lat' must be specified in decimal degrees.")
-		if(min_lat < 0 || min_lat > 90) stop("'min_lat' must have a value between 0 and 90.")
-	}
-	if(!missing(max_lat)) {
-		if(!is.numeric(max_lat)) stop("'max_lat' must be specified in decimal degrees.")
-		if(max_lat < 0 || max_lat > 90) stop("'max_lat' must have a value between 0 and 90.")
-	}
-	if(!missing(min_lon)) {
-		if(!is.numeric(min_lon)) stop("'min_lon' must be specified in decimal degrees.")
-		if(min_lon < -180 || min_lon > 180) stop("'min_lon' must have a value between -180 and 180.")
-	}
-	if(!missing(max_lon)) {
-		if(!is.numeric(max_lon)) stop("'max_lon' must be specified in decimal degrees.")
-		if(max_lon < -180 || max_lon > 180) stop("'max_lon' must have a value between -180 and 180.")
-	}
-	if(!missing(min_lat) && !missing(max_lat)) {
-		min_lat <- min(min_lat, max_lat)
-		max_lat <- max(min_lat, max_lat)
-	}
-	if(!missing(min_lon) && !missing(max_lon)) {
-		min_lon <- min(min_lon, max_lon)
-		max_lon <- max(min_lon, max_lon)
-	}
-	
-	# drop empty parameters
-	if(missing(min_lat)) min_lat <- NULL
-	if(missing(max_lat)) max_lat <- NULL
-	if(missing(min_lon)) min_lon <- NULL
-	if(missing(max_lon)) max_lon <- NULL
-	if(missing(start_time)) start_time <- NULL
-	if(missing(end_time)) end_time <- NULL
-	if(missing(user)) user <- NULL
-	if(missing(limit)) limit <- NULL
-	if(missing(page)) page <- NULL
-	
-	# make request
-  res <- m_get_url(path="search/im/cm", min_lat=min_lat, max_lat=max_lat, min_lon=min_lon, max_lon=max_lon, 
-    start_time=start_time, end_time=end_time, user=user, limit=limit, page=page)
-  raw <- m_parse(res)
-  df <- to_df(raw, "search_im_cm")
-  
-  # return
-  if(print) print(df)
-  invisible(df)
-}
-
 
 
 #' @title Search for sequences
 #' @description Search for sequences.
 #'
-#' @param min_lat Minimum latitude.
-#' @param max_lat Maximum latitude.
-#' @param min_lon Minimum longitude.
-#' @param max_lon Maximum longitude.
-#' @param start_time Start time in EPOCH ms.
-#' @param end_time End time in EPOCH ms.
-#' @param user Just objects for specific user.
-#' @param limit Results per page in pagination.
+#' @param bbox Bounding box, given as vector of minx, miny, maxx, maxy.
+#' @param start_time Start time images are captured (following ISO 8601 rules).
+#' @param end_time End time images are captured before (following ISO 8601 rules).
+#' @param user_name Just objects for specific users, given as vector of usernames.
+#' @param user_key Just objects for specific users, given as vector of user keys.
+#' @param starred If \code{TRUE}, only starred sequences are requested. Default is \code{FALSE}.
 #' @param page Page number in pagination.
+#' @param per_page Results per page in pagination.
+#' @param fields Partially selected output fields, given as string or vector of strings. 
+#' Available fields: \code{camera_angle}, \code{camera_make}, \code{camera_model}, 
+#' \code{captured_at}, \code{img_key}, \code{panorama}, \code{user_key}, \code{user_name}, 
+#' \code{longitude}, \code{latitude}. Default is all available fields.
 #' @param print if \code{TRUE} (default) the search results are printed.
 #' @return A \code{data.frame} of matching sequences.
-#' @source \url{https://a.mapillary.com/#get-searchsul}
+#' @source \url{https://a.mapillary.com/#sequences}
 #' @export
 #' @examples
 #' \dontrun{
-#' search_seq(min_lat=49.019063, max_lat=49.328211,
-#'   min_lon=-123.233919, max_lon=-122.298288)
+#' sequences(bbox=c(19.963211,49.317328,20.004066,49.325832), page=1, per_page=10)
 #' }
-search_seq <- function(min_lat, max_lat, min_lon, max_lon, 
-  start_time, end_time, user, limit, page, print=TRUE) {
+sequences <- function(bbox, start_time, end_time, 
+                      user_name, user_key, starred=FALSE, 
+                      page, per_page, fields, print=TRUE) {
 	
-	# check parameters
-	if(missing(min_lat) && missing(max_lat)) stop("At least one of 'min_lat' and 'max_lat' is required.")
-	if(missing(min_lon) && missing(max_lon)) stop("At least one of 'min_lon' and 'max_lon' is required.") 
-	if(!missing(min_lat)) {
-		if(!is.numeric(min_lat)) stop("'min_lat' must be specified in decimal degrees.")
-		if(min_lat < 0 || min_lat > 90) stop("'min_lat' must have a value between 0 and 90.")
-	}
-	if(!missing(max_lat)) {
-		if(!is.numeric(max_lat)) stop("'max_lat' must be specified in decimal degrees.")
-		if(max_lat < 0 || max_lat > 90) stop("'max_lat' must have a value between 0 and 90.")
-	}
-	if(!missing(min_lon)) {
-		if(!is.numeric(min_lon)) stop("'min_lon' must be specified in decimal degrees.")
-		if(min_lon < -180 || min_lon > 180) stop("'min_lon' must have a value between -180 and 180.")
-	}
-	if(!missing(max_lon)) {
-		if(!is.numeric(max_lon)) stop("'max_lon' must be specified in decimal degrees.")
-		if(max_lon < -180 || max_lon > 180) stop("'max_lon' must have a value between -180 and 180.")
-	}
-	if(!missing(min_lat) && !missing(max_lat)) {
-		min_lat <- min(min_lat, max_lat)
-		max_lat <- max(min_lat, max_lat)
-	}
-	if(!missing(min_lon) && !missing(max_lon)) {
-		min_lon <- min(min_lon, max_lon)
-		max_lon <- max(min_lon, max_lon)
-	}
-	
-	# drop empty parameters
-	if(missing(min_lat)) min_lat <- NULL
-	if(missing(max_lat)) max_lat <- NULL
-	if(missing(min_lon)) min_lon <- NULL
-	if(missing(max_lon)) max_lon <- NULL
-	if(missing(start_time)) start_time <- NULL
-	if(missing(end_time)) end_time <- NULL
-	if(missing(user)) user <- NULL
-	if(missing(limit)) limit <- NULL
-	if(missing(page)) page <- NULL
+  available_fields <- getOption("mapillRy_available_fields")
+  
+  # drop empty parameters
+  if(missing(bbox)) bbox <- NULL
+  else bbox <- paste(bbox, collapse=",")
+  if(missing(start_time)) start_time <- NULL
+  if(missing(end_time)) end_time <- NULL
+  if(missing(user_name)) user_name <- NULL
+  else user_name <- paste(user_name, collapse=",")
+  if(missing(user_key)) user_key <- NULL
+  else user_key <- paste(user_key, collapse=",")
+  if(missing(page)) page <- NULL
+  if(missing(per_page)) per_page <- NULL
+  if(missing(fields)) fields <- available_fields
 	
 	# make request
-  res <- m_get_url(path="search/s/ul", min_lat=min_lat, max_lat=max_lat, min_lon=min_lon, max_lon=max_lon, 
-    start_time=start_time, end_time=end_time, user=user, limit=limit, page=page)
+  res <- m_get_url(path="sequences", bbox=bbox,  
+    start_time=start_time, end_time=end_time, 
+    usernames=user_name, userkeys=user_key, starred=tolower(starred), 
+    page=page, per_page=per_page)
   raw <- m_parse(res)
-  df <- to_df(raw, "search_seq")
+  df <- seq_to_df(raw, fields)
   
   # return
   if(print) print(df)
   invisible(df)
 }
-
-
-
-#' @title Get random image
-#' @description Get a random image from the Mapillary image archive, 
-#' the images is randomized from a set of curated images.
-#'
-#' @param print if \code{TRUE} (default) the search results are printed.
-#' @return A \code{data.frame} of the random image.
-#' @source \url{https://a.mapillary.com/#get-searchimrandomselected}
-#' @note This request might fail irregularly (HTTP error 404).
-#' @export
-#' @examples
-#' \dontrun{
-#' search_im_random()
-#' }
-search_im_random <- function(print=TRUE) {
-	
-	# make request
-  res <- m_get_url(path="search/im/randomselected")
-  raw <- m_parse(res)
-  df <- to_df(raw, "search_im_random")
-  
-  # return
-  if(print) print(df)
-  invisible(df)
-}
-
 
 
 #' @title Search for usernames
@@ -355,7 +151,6 @@ search_user <- function(user, print=TRUE) {
 }
 
 
-
 #' @title Statistics about images in the Mapillary system
 #' @description Retrieve statistics about images in the Mapillary system.
 #'
@@ -378,7 +173,6 @@ stats_im <- function(print=TRUE) {
   if(print) print(df)
   invisible(df)
 }
-
 
 
 #' @title Top lists statistics for Mapillary
@@ -413,7 +207,6 @@ stats_top <- function(cname, limit, print=TRUE) {
   if(print) print(df)
   invisible(df)
 }
-
 
 
 #' @title Get images
@@ -466,7 +259,6 @@ get_im <- function(key, size="m", save) {
   # return image path
   if(rtrn) invisible(img_path)
 }
-
 
 
 #' @title View images
