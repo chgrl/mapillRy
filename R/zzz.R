@@ -11,10 +11,13 @@
 
 
 .onLoad <- function(libname, pkgname) {
-  options(mapillRy.available.fields = c("camera_angle", "camera_make", "camera_model", 
+  options(mapillRy.available.img.fields = c("camera_angle", "camera_make", "camera_model", 
                                         "captured_at", "img_key", "panorama", 
                                         "user_key", "user_name", "project_key", 
                                         "longitude", "latitude"))
+  options(mapillRy.available.seq.fields = c("camera_make", "captured_at", "created_at",
+                                            "seq_key", "panorama", "user_key", "user_name", 
+                                            "num_img"))
 }
           
 

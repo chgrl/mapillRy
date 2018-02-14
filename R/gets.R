@@ -30,7 +30,7 @@ images <- function(bbox, closeto, radius, lookat,
   start_time, end_time, user_name, user_key, project_key, 
   page, per_page, fields, print=TRUE) {
 	
-  available_fields <- getOption("mapillRy.available.fields")
+  available_fields <- getOption("mapillRy.available.img.fields")
   
 	# drop empty parameters
 	if(missing(bbox)) bbox <- NULL
@@ -58,7 +58,7 @@ images <- function(bbox, closeto, radius, lookat,
 	                 usernames=user_name, userkeys=user_key, project_keys=project_key, 
 	                 page=page, per_page=per_page)
 	raw <- m_parse(res)
-	fields <- available_fields[grep(paste(fields, collapse="|"), available_fields)]
+	fields <- rev(available_fields[grep(paste(fields, collapse="|"), available_fields)])
 	df <- img_to_df(raw, fields)
 
 	# return
@@ -79,10 +79,11 @@ images <- function(bbox, closeto, radius, lookat,
 #' @param page Page number in pagination.
 #' @param per_page Results per page in pagination.
 #' @param fields Partially selected output fields, given as string or vector of strings. 
-#' Available fields: \code{camera_angle}, \code{camera_make}, \code{camera_model}, 
-#' \code{captured_at}, \code{img_key}, \code{panorama}, \code{user_key}, \code{user_name}, 
-#' \code{longitude}, \code{latitude}. Default is all available fields.
-#' @param print if \code{TRUE} (default) the search results are printed.
+#' Fields are sorted in given order. Available fields: \code{camera_make}, 
+#' \code{captured_at}, \code{created_at}, \code{seq_key}, \code{panorama}, 
+#' \code{user_key}, \code{user_name}, \code{num_img}. 
+#' If \code{fields} is missing (default), all available fields are returned.
+#' @param print If \code{TRUE} (default) the search results are printed.
 #' @return A \code{data.frame} of matching sequences.
 #' @source \url{https://a.mapillary.com/#sequences}
 #' @export
@@ -94,7 +95,7 @@ sequences <- function(bbox, start_time, end_time,
                       user_name, user_key, starred=FALSE, 
                       page, per_page, fields, print=TRUE) {
 	
-  available_fields <- getOption("mapillRy_available_fields")
+  available_fields <- getOption("mapillRy.available.seq.fields")
   
   # drop empty parameters
   if(missing(bbox)) bbox <- NULL
@@ -115,6 +116,7 @@ sequences <- function(bbox, start_time, end_time,
     usernames=user_name, userkeys=user_key, starred=tolower(starred), 
     page=page, per_page=per_page)
   raw <- m_parse(res)
+  fields <- rev(available_fields[grep(paste(fields, collapse="|"), available_fields)])
   df <- seq_to_df(raw, fields)
   
   # return

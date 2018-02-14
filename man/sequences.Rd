@@ -28,11 +28,12 @@ sequences(bbox, start_time, end_time, user_name, user_key, starred = FALSE,
 \item{per_page}{Results per page in pagination.}
 
 \item{fields}{Partially selected output fields, given as string or vector of strings. 
-Available fields: \code{camera_angle}, \code{camera_make}, \code{camera_model}, 
-\code{captured_at}, \code{img_key}, \code{panorama}, \code{user_key}, \code{user_name}, 
-\code{longitude}, \code{latitude}. Default is all available fields.}
+Fields are sorted in given order. Available fields: \code{camera_make}, 
+\code{captured_at}, \code{created_at}, \code{seq_key}, \code{panorama}, 
+\code{user_key}, \code{user_name}, \code{num_img}. 
+If \code{fields} is missing (default), all available fields are returned.}
 
-\item{print}{if \code{TRUE} (default) the search results are printed.}
+\item{print}{If \code{TRUE} (default) the search results are printed.}
 }
 \value{
 A \code{data.frame} of matching sequences.
