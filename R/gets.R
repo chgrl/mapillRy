@@ -18,7 +18,11 @@
 #' \code{camera_make}, \code{camera_model}, \code{captured_at}, \code{img_key}, 
 #' \code{panorama}, \code{user_key}, \code{user_name}, \code{project_key}, \code{longitude}, \code{latitude}. 
 #' If \code{fields} is missing (default), all available fields are returned.
-#' @param print If \code{TRUE} (default) the search results are printed.
+#' @param json If \code{FALSE} (default) the results are returned as simplified 
+#' \code{data.frame}. \code{TRUE} (invisibly) returns the original JSON object (\code{fields} is
+#' ignored).
+#' @param print If \code{TRUE} (default) the search results are printed. If \code{json=TRUE},
+#' nothing is printed.
 #' @return A \code{data.frame} of matching images.
 #' @source \url{https://a.mapillary.com/#images}
 #' @export
@@ -27,8 +31,10 @@
 #' images(bbox=c(19.963211,49.317328,20.004066,49.325832), page=1, per_page=10)
 #' }
 images <- function(bbox, closeto, radius, lookat, 
-  start_time, end_time, user_name, user_key, project_key, 
-  page, per_page, fields, print=TRUE) {
+                  start_time, end_time, 
+                  user_name, user_key, project_key, 
+                  page, per_page, fields, 
+                  json=FALSE, print=TRUE) {
 	
   available_fields <- getOption("mapillRy.available.img.fields")
   
@@ -51,6 +57,7 @@ images <- function(bbox, closeto, radius, lookat,
 	if(missing(page)) page <- NULL
 	if(missing(per_page)) per_page <- NULL
 	if(missing(fields)) fields <- available_fields
+	if(json) print <- FALSE
 	
 	# make request
 	res <- m_get_url(path="images", bbox=bbox, closeto=closeto, radius=radius, lookat=lookat, 
@@ -64,6 +71,10 @@ images <- function(bbox, closeto, radius, lookat,
 	# return
   if(print) print(df)
   invisible(df)
+	if(json) {
+	  invisible(raw)
+	} else {
+	}
 }
 
 
@@ -83,7 +94,11 @@ images <- function(bbox, closeto, radius, lookat,
 #' \code{captured_at}, \code{created_at}, \code{seq_key}, \code{panorama}, 
 #' \code{user_key}, \code{user_name}, \code{num_img}. 
 #' If \code{fields} is missing (default), all available fields are returned.
-#' @param print If \code{TRUE} (default) the search results are printed.
+#' @param json If \code{FALSE} (default) the results are returned as simplified 
+#' \code{data.frame}. \code{TRUE} (invisibly) returns the original JSON object (\code{fields} is
+#' ignored.
+#' @param print If \code{TRUE} (default) the search results are printed. If \code{json=TRUE},
+#' nothing is printed.
 #' @return A \code{data.frame} of matching sequences.
 #' @source \url{https://a.mapillary.com/#sequences}
 #' @export
@@ -93,7 +108,8 @@ images <- function(bbox, closeto, radius, lookat,
 #' }
 sequences <- function(bbox, start_time, end_time, 
                       user_name, user_key, starred=FALSE, 
-                      page, per_page, fields, print=TRUE) {
+                      page, per_page, fields, 
+                      json=FALSE, print=TRUE) {
 	
   available_fields <- getOption("mapillRy.available.seq.fields")
   
@@ -109,6 +125,7 @@ sequences <- function(bbox, start_time, end_time,
   if(missing(page)) page <- NULL
   if(missing(per_page)) per_page <- NULL
   if(missing(fields)) fields <- available_fields
+  if(json) print <- FALSE
 	
 	# make request
   res <- m_get_url(path="sequences", bbox=bbox,  
@@ -116,12 +133,16 @@ sequences <- function(bbox, start_time, end_time,
     usernames=user_name, userkeys=user_key, starred=tolower(starred), 
     page=page, per_page=per_page)
   raw <- m_parse(res)
-  fields <- rev(available_fields[grep(paste(fields, collapse="|"), available_fields)])
-  df <- seq_to_df(raw, fields)
   
   # return
-  if(print) print(df)
-  invisible(df)
+  if(json) {
+    invisible(raw)
+  } else {
+    fields <- sapply(fields, function(x) available_fields[grep(x, available_fields)])
+    df <- seq_to_df(raw, fields)
+    if(print) print(df)
+    invisible(df)
+  }
 }
 
 
