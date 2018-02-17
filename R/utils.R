@@ -82,8 +82,8 @@ img_to_df <- function(lst, fields) {
 		                 user_key=user_key, user_name=username, project_key=project_key, 
 		                 longitude=lon, latitude=lat, 
 		                 stringsAsFactors=FALSE)
-		# select output and sort
-	  df <- df[,fields]
+		# select output
+	  df <- df[fields]
 	}
 	
 	return(df)
@@ -112,13 +112,14 @@ seq_to_df <- function(lst, fields) {
     pano <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["pano"]]))
     user_key <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["user_key"]]))
     username <- unlist(lapply(lst[["features"]], function(x) x[["properties"]][["username"]]))
-    num_img <- length(lapply(lst[["features"]], function(x) x[["properties"]][["coordinateProperties"]][["image_keys"]]))
+    num_img <- unlist(lapply(lst[["features"]], function(x) length(x[["properties"]][["coordinateProperties"]][["image_keys"]])))
     
     df <- data.frame(camera_make=camera_make, captured_at=captured_at, created_at=created_at, 
                      seq_key=key, panorama=pano, user_key=user_key, user_name=username, 
                      num_img=num_img, 
                      stringsAsFactors=FALSE)
-    df <- df[,fields]
+    # select output
+    df <- df[fields]
   }
   
   return(df)

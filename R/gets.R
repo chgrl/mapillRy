@@ -65,15 +65,15 @@ images <- function(bbox, closeto, radius, lookat,
 	                 usernames=user_name, userkeys=user_key, project_keys=project_key, 
 	                 page=page, per_page=per_page)
 	raw <- m_parse(res)
-	fields <- rev(available_fields[grep(paste(fields, collapse="|"), available_fields)])
-	df <- img_to_df(raw, fields)
-
+	
 	# return
-  if(print) print(df)
-  invisible(df)
 	if(json) {
 	  invisible(raw)
 	} else {
+	  fields <- sapply(fields, function(x) available_fields[grep(x, available_fields)])
+	  df <- img_to_df(raw, fields)
+    if(print) print(df)
+    invisible(df)
 	}
 }
 
