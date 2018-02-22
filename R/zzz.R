@@ -18,6 +18,8 @@
   options(mapillRy.available.seq.fields = c("camera_make", "captured_at", "created_at",
                                             "seq_key", "panorama", "user_key", "user_name", 
                                             "num_img"))
+  options(mapillRy.available.usr.fields = c("user_name", "user_key", "about",
+                                            "created_at", "avatar"))
 }
           
 

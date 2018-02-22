@@ -33,7 +33,7 @@ Fields are sorted in given order. Available fields: \code{camera_make},
 \code{user_key}, \code{user_name}, \code{num_img}. 
 If \code{fields} is missing (default), all available fields are returned.}
 
-\item{json}{If \code{FALSE} (default) the results are returned as simplified 
+\item{json}{If \code{FALSE} (default) the results are returned as simplified
 \code{data.frame}. \code{TRUE} (invisibly) returns the original JSON object (\code{fields} is
 ignored.}
 
@@ -41,7 +41,7 @@ ignored.}
 nothing is printed.}
 }
 \value{
-A \code{data.frame} of matching sequences.
+A \code{data.frame} or \code{list} (if \code{json=TRUE}) of matching sequences.
 }
 \description{
 Search for sequences.

@@ -48,7 +48,7 @@ ignored).}
 nothing is printed.}
 }
 \value{
-A \code{data.frame} of matching images.
+A \code{data.frame} or \code{list} (if \code{json=TRUE}) of matching images.
 }
 \description{
 Search for images.

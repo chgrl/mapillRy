@@ -23,7 +23,7 @@
 #' ignored).
 #' @param print If \code{TRUE} (default) the search results are printed. If \code{json=TRUE},
 #' nothing is printed.
-#' @return A \code{data.frame} of matching images.
+#' @return A \code{data.frame} or \code{list} (if \code{json=TRUE}) of matching images.
 #' @source \url{https://a.mapillary.com/#images}
 #' @export
 #' @examples
@@ -94,12 +94,12 @@ images <- function(bbox, closeto, radius, lookat,
 #' \code{captured_at}, \code{created_at}, \code{seq_key}, \code{panorama}, 
 #' \code{user_key}, \code{user_name}, \code{num_img}. 
 #' If \code{fields} is missing (default), all available fields are returned.
-#' @param json If \code{FALSE} (default) the results are returned as simplified 
+#' @param json If \code{FALSE} (default) the results are returned as simplified
 #' \code{data.frame}. \code{TRUE} (invisibly) returns the original JSON object (\code{fields} is
 #' ignored.
 #' @param print If \code{TRUE} (default) the search results are printed. If \code{json=TRUE},
 #' nothing is printed.
-#' @return A \code{data.frame} of matching sequences.
+#' @return A \code{data.frame} or \code{list} (if \code{json=TRUE}) of matching sequences.
 #' @source \url{https://a.mapillary.com/#sequences}
 #' @export
 #' @examples
@@ -146,32 +146,63 @@ sequences <- function(bbox, start_time, end_time,
 }
 
 
-#' @title Search for usernames
-#' @description Search for usernames.
+#' @title Search for users
+#' @description Search for users who contributed in a certain region.
 #'
-#' @param user String to try to match for a username.
+#' @param bbox Bounding box, given as vector of minx, miny, maxx, maxy.
+#' @param user_name String (or vector of strings) to filter for usernames.
+#' @param user_key String (or vector of strings) to filter for user keys.
+#' @param page Page number in pagination.
+#' @param per_page Results per page in pagination.
+#' @param fields Partially selected output fields, given as string or vector of strings. 
+#' Fields are sorted in given order. Available fields: \code{about}, 
+#' \code{avatar}, \code{created_at}, \code{key}, \code{username}. 
+#' If \code{fields} is missing (default), all available fields are returned.
+#' @param json If \code{FALSE} (default) the results are returned as simplified
+#' \code{data.frame}. \code{TRUE} (invisibly) returns the original JSON object (\code{fields} is
+#' ignored.
 #' @param print if \code{TRUE} (default) the search results are printed.
-#' @return A \code{data.frame} of the matching usernames.
-#' @source \url{https://a.mapillary.com/#get-searchu}
+#' @return A \code{data.frame} of users.
+#' @details Returned users are ordered by \code{created_at}. If \code{bbox} is provided, 
+#' users are ordered by their last captured times.
+#' @source \url{https://a.mapillary.com/#users}
 #' @export
 #' @examples
 #' \dontrun{
-#' search_user("mynameis")
+#' users(user_name="mynameis")
 #' }
-search_user <- function(user, print=TRUE) {
+users <- function(bbox, user_name, user_key, 
+                  page, per_page, fields, 
+                  json=FALSE, print=TRUE) {
 	
-	# check parameter
-	if(missing(user)) stop("'user' is mandatory.")
-	if(!is.character(user)) stop("Please specify 'user' as string.")
-	
-	# make request
-  res <- m_get_url(path="search/u", match=user)
+  available_fields <- getOption("mapillRy.available.usr.fields")
+  
+	# drop empty parameters
+  if(missing(bbox)) bbox <- NULL
+  else bbox <- paste(bbox, collapse=",")
+  if(missing(user_name)) user_name <- NULL
+  else user_name <- paste(user_name, collapse=",")
+  if(missing(user_key)) user_key <- NULL
+  else user_key <- paste(user_key, collapse=",")
+  if(missing(page)) page <- NULL
+  if(missing(per_page)) per_page <- NULL
+  if(missing(fields)) fields <- available_fields
+
+  	# make request
+  res <- m_get_url(path="users", bbox=bbox,
+                   usernames=user_name, userkeys=user_key, 
+                   page=page, per_page=per_page)
   raw <- m_parse(res)
-  df <- to_df(raw, "search_user")
   
   # return
-  if(print) print(df)
-  invisible(df)
+  if(json) {
+    invisible(raw)
+  } else {
+    fields <- sapply(fields, function(x) available_fields[grep(x, available_fields)])
+    df <- usr_to_df(raw, fields)
+    if(print) print(df)
+    invisible(df)
+  }
 }
 
 

@@ -24,33 +24,6 @@ m_parse <- function(res) {
 }
 
 
-# convert timestamp to date
-epoch_to_date <- function(epoch) {
-	date <- as.POSIXct(epoch/1000, origin="1970-01-01")
-  date_form <- strftime(date, "%Y-%m-%d %H:%M:%S")
-  return(date_form)
-}
-
-
-# convert timestamp to epoch
-date_to_epoch <- function(date) {
-	if(nchar(date)==19) {
-		if(length(grep("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", date))!=1) stop("Cannot read 'start_time'/'end_time'")
-	} else if(nchar(date)==16) {
-		if(length(grep("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}", date))!=1) stop("Cannot read 'start_time'/'end_time'")
-		date <- paste0(date, ":00")
-	} else if(nchar(date)==13) {
-		if(length(grep("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}", date))!=1) stop("Cannot read 'start_time'/'end_time'")
-		date <- paste0(date, ":00:00")
-	} else if(nchar(date)==10) {
-		if(length(grep("[0-9]{4}-[0-9]{2}-[0-9]{2}", date))!=1) stop("Cannot read 'start_time'/'end_time'")
-		date <- paste0(date, " 00:00:00")
-	} else stop("'start_time' and 'end_time' must be specified as ISO date")
-	epoch <- as.character(as.numeric(strptime(date, "%Y-%m-%d %H:%M:%S"))*1000)
-	return(epoch)
-}
-
-
 # convert image list to data frame
 img_to_df <- function(lst, fields) {
 	num_ims <- length(lst[["features"]])
@@ -92,11 +65,11 @@ img_to_df <- function(lst, fields) {
 
 # convert sequence list to data frame
 seq_to_df <- function(lst, fields) {
-  num_ims <- length(lst[["features"]])
-  if(num_ims==0) df <- NULL
+  num_seq <- length(lst[["features"]])
+  if(num_seq==0) df <- NULL
   else {
     # set missing (optional) properties
-    for(i in 1:num_ims) {
+    for(i in 1:num_seq) {
       if(is.null(lst[["features"]][[i]][["properties"]][["ca"]])) {
         lst[["features"]][[i]][["properties"]][["ca"]] <- NA
       }
@@ -117,6 +90,36 @@ seq_to_df <- function(lst, fields) {
     df <- data.frame(camera_make=camera_make, captured_at=captured_at, created_at=created_at, 
                      seq_key=key, panorama=pano, user_key=user_key, user_name=username, 
                      num_img=num_img, 
+                     stringsAsFactors=FALSE)
+    # select output
+    df <- df[fields]
+  }
+  
+  return(df)
+}
+
+
+# convert user list to data frame
+usr_to_df <- function(lst, fields) {
+  num_usr <- length(lst)
+  if(num_usr==0) df <- NULL
+  else {
+    # set missing (optional) properties
+    for(i in 1:num_usr) {
+      if(is.null(lst[[i]][["about"]])) {
+        lst[[i]][["about"]] <- NA
+      }
+    }
+    # get properties
+    about <- unlist(lapply(lst, function(x) x[["about"]]))
+    #avatar <- grepl("profile.png", unlist(lapply(lst, function(x) x[["avatar"]])), fixed=TRUE)
+    avatar <- unlist(lapply(lst, function(x) x[["avatar"]]))
+    #avatar <- gsub("https://d4vkkeqw582u.cloudfront.net/|/profile.png|https://www.mapillary.com/external/fake-avatar.png", "", avatar)
+    created_at <- unlist(lapply(lst, function(x) x[["created_at"]]))
+    key <- unlist(lapply(lst, function(x) x[["key"]]))
+    username <- unlist(lapply(lst, function(x) x[["username"]]))
+    df <- data.frame(user_name=username, user_key=key, about=about, 
+                     avatar=avatar, created_at=created_at, 
                      stringsAsFactors=FALSE)
     # select output
     df <- df[fields]
