@@ -20,6 +20,8 @@
                                             "num_img"))
   options(mapillRy.available.usr.fields = c("user_name", "user_key", "about",
                                             "created_at", "avatar"))
+  options(mapillRy.available.usr.stats.fields = c("user_name", "user_key", "images", "sequences", "distance", 
+                                                  "edits", "blurs"))
 }
           
 

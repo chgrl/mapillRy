@@ -206,6 +206,72 @@ users <- function(bbox, user_name, user_key,
 }
 
 
+#' @title Get user stats
+#' @description Get statistics about a user.
+#'
+#' @param user_name Username as string (or vector of strings). Optional, if \code{user_key} is given.
+#' @param user_key User key as string (or vector of strings). Optional, if \code{user_name} is given.
+#' @param fields Partially selected output fields, given as string or vector of strings. 
+#' Fields are sorted in given order. Available fields: \code{images}, 
+#' \code{sequences}, \code{edits}, \code{blurs}. 
+#' If \code{fields} is missing (default), all available fields are returned.
+#' @param json If \code{FALSE} (default) the results are returned as simplified
+#' \code{data.frame}. \code{TRUE} (invisibly) returns the original JSON object (\code{fields} is
+#' ignored.
+#' @param print if \code{TRUE} (default) the search results are printed.
+#' @return A \code{data.frame} of user statistics.
+#' @source \url{https://a.mapillary.com/#the-user-statistics}
+#' @export
+#' @examples
+#' \dontrun{
+#' users(user_name="mynameis")
+#' }
+user_stats <- function(user_name, user_key, 
+                       fields, json=FALSE, print=TRUE) {
+  
+  available_fields <- getOption("mapillRy.available.usr.stats.fields")
+  
+  # prepare parameters
+  if(missing(user_name)) {
+    if(missing(user_key)) {
+      stop("Please give user_name or user_key")
+    } else {
+      user_name <- users(user_key=user_key, print=FALSE)$user_name
+    }
+  } else {
+    if(missing(user_key)) {
+      user_key <- users(user_name=user_name, print=FALSE)$user_key
+    } else {
+      users_from_key <- users(user_key=user_key, print=FALSE)
+      users_from_name <- users(user_name=user_name, print=FALSE)
+      users <- rbind(users_from_key, users_from_name)
+      user_key <- users$user_key
+      user_name <- users$user_name
+    }
+  }
+  names(user_name) <- NULL
+  attributes(user_key)$names <- user_name
+  if(missing(fields)) fields <- available_fields
+  
+  # make request(s)
+  raw <- lapply(user_key, function(x) m_parse(m_get_url(path=paste("users", x, "stats", sep="/"))))
+  
+  # return
+  if(json) {
+    invisible(raw)
+  } else {
+    fields <- sapply(fields, function(x) available_fields[grep(x, available_fields)])
+    df <- usr_stats_to_df(raw, fields)
+    if(print) print(df)
+    invisible(df)
+  }
+}
+
+
+
+
+
+
 #' @title Statistics about images in the Mapillary system
 #' @description Retrieve statistics about images in the Mapillary system.
 #'

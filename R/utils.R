@@ -1,7 +1,7 @@
 # make request
 m_get_url <- function(path, ...) {
 	res <- GET("https://a.mapillary.com", path=paste0("v3/", path), query=list(client_id="QmpJMFpwR09HVG9NdV9lZHo2ZlFGQTpiZDUzNzRiYTc5NWRiYzc3", ...))
-	message("Request: ", res$url) # for debugging
+	#message("Request: ", res$url) # for debugging
 	m_check(res)
 	return(res)
 }
@@ -121,6 +121,32 @@ usr_to_df <- function(lst, fields) {
     df <- data.frame(user_name=username, user_key=key, about=about, 
                      avatar=avatar, created_at=created_at, 
                      stringsAsFactors=FALSE)
+    # select output
+    df <- df[fields]
+  }
+  
+  return(df)
+}
+
+
+# convert user list to data frame
+usr_stats_to_df <- function(lst, fields) {
+  num_usr <- length(lst)
+  if(num_usr==0) df <- NULL
+  else {
+    # get properties
+    username <- names(lst)
+    key <- unlist(lapply(lst, function(x) x[["user_key"]]))
+    images <- unlist(lapply(lst, function(x) x[["images"]][["total_count"]]))
+    sequences <- unlist(lapply(lst, function(x) x[["sequences"]][["total_count"]]))
+    distance <- unlist(lapply(lst, function(x) x[["sequences"]][["total_distance"]]))
+    edits <- unlist(lapply(lst, function(x) x[["edits"]][["total_count"]]))
+    blurs <- unlist(lapply(lst, function(x) x[["blurs"]][["total_count"]]))
+    df <- data.frame(user_name=username, user_key=key, 
+                     images=images, sequences=sequences, distance=distance, 
+                     edits=edits, blurs=blurs, 
+                     stringsAsFactors=FALSE)
+    row.names(df) <- NULL
     # select output
     df <- df[fields]
   }
