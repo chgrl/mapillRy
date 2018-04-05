@@ -153,3 +153,23 @@ usr_stats_to_df <- function(lst, fields) {
   
   return(df)
 }
+
+
+# convert leaderboard to data frame
+lead_to_df <- function(lst, fields) {
+  num_usr <- length(lst)
+  if(num_usr==0) df <- NULL
+  else {
+    # get properties
+    username <- unlist(lapply(lst, function(x) x[["username"]]))
+    key <- unlist(lapply(lst, function(x) x[["user_key"]]))
+    images <- unlist(lapply(lst, function(x) x[["image_count"]]))
+    df <- data.frame(user_name=username, user_key=key, 
+                     images=images, stringsAsFactors=FALSE)
+    row.names(df) <- NULL
+    # select output
+    df <- df[fields]
+  }
+  
+  return(df)
+}

@@ -22,6 +22,7 @@
                                             "created_at", "avatar"))
   options(mapillRy.available.usr.stats.fields = c("user_name", "user_key", "images", "sequences", "distance", 
                                                   "edits", "blurs"))
+  options(mapillRy.available.ldrbrd.fields = c("user_name", "user_key", "images"))
 }
           
 

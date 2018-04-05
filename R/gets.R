@@ -271,66 +271,75 @@ user_stats <- function(user_name, user_key,
 }
 
 
-
-
-
-
-#' @title Statistics about images in the Mapillary system
-#' @description Retrieve statistics about images in the Mapillary system.
+#' @title Leaderboard for image uploads
+#' @description Show the leaderboard for a certain region and/or time of image capture.
 #'
-#' @param print if \code{TRUE} (default) the statistics are printed.
-#' @return A \code{data.frame} with basic statistics.
-#' @source \url{https://a.mapillary.com/#get-statsim}
+#' @param bbox Bounding box, given as vector of minx, miny, maxx, maxy.
+#' @param country Countries, given as vector of ISO 3166 country codes.
+#' @param start_time Start time images are captured (following ISO 8601 rules).
+#' @param end_time End time images are captured before (following ISO 8601 rules).
+#' @param user_name String (or vector of strings) to filter for usernames.
+#' @param user_key String (or vector of strings) to filter for user keys.
+#' @param page Page number in pagination.
+#' @param per_page Results per page in pagination.
+#' @param fields Partially selected output fields, given as string or vector of strings. 
+#' Fields are sorted in given order. Available fields: \code{user_name}, \code{user_key}, 
+#' \code{images}.
+#' If \code{fields} is missing (default), all available fields are returned.
+#' @param json If \code{FALSE} (default) the results are returned as simplified
+#' \code{data.frame}. \code{TRUE} (invisibly) returns the original JSON object (\code{fields} is
+#' ignored.
+#' @param print if \code{TRUE} (default) the search results are printed.
+#' @return A \code{data.frame} of users.
+#' @source \url{https://a.mapillary.com/#leaderboard}
+#' @references \url{https://en.wikipedia.org/wiki/ISO_3166}
 #' @export
 #' @examples
 #' \dontrun{
-#' stats_im()
+#' leaderboard(countries=c("de", "at", "ch"), page=1, per_page=10))
 #' }
-stats_im <- function(print=TRUE) {
-	
-	# make request
-  res <- m_get_url(path="stats/im")
+leaderboard <- function(bbox, country,
+                        start_time, end_time,
+                        user_name, user_key, 
+                        page, per_page, fields, 
+                        json=FALSE, print=TRUE) {
+  
+  available_fields <- getOption("mapillRy.available.ldrbrd.fields")
+  
+  # prepare parameters
+  if(missing(bbox)) bbox <- NULL
+  else bbox <- paste(bbox, collapse=",")
+  if(missing(country)) country <- NULL
+  else country <- paste(country, collapse=",")
+  if(missing(start_time)) start_time <- NULL
+  if(missing(end_time)) end_time <- NULL
+  if(missing(user_name)) user_name <- NULL
+  else user_name <- paste(user_name, collapse=",")
+  if(missing(user_key)) user_key <- NULL
+  else user_key <- paste(user_key, collapse=",")
+  if(missing(page)) page <- NULL
+  if(missing(per_page)) per_page <- NULL
+  if(missing(fields)) fields <- available_fields
+  
+  # make request
+  res <- m_get_url(path="leaderboard/images", bbox=bbox, iso_countries=country, 
+                   usernames=user_name, userkeys=user_key, 
+                   page=page, per_page=per_page)
   raw <- m_parse(res)
-  df <- to_df(raw, "stats_im")
   
   # return
-  if(print) print(df)
-  invisible(df)
+  if(json) {
+    invisible(raw)
+  } else {
+    fields <- sapply(fields, function(x) available_fields[grep(x, available_fields)])
+    df <- lead_to_df(raw, fields)
+    if(print) print(df)
+    invisible(df)
+  }
 }
 
 
-#' @title Top lists statistics for Mapillary
-#' @description Retrieve weekly and total top lists for Mapillary.
-#'
-#' @param cname Name of country for stats (optional - if not added whole world is assumed).
-#' @param limit Number of users in every list (default 10, optional).
-#' @param print if \code{TRUE} (default) the statistics are printed.
-#' @return A \code{list} of two \code{data.frame}s, one for each toplist.
-#' @source \url{https://a.mapillary.com/#get-statsimtoplist}
-#' @export
-#' @examples
-#' \dontrun{
-#' stats_top("namibia")
-#' }
-stats_top <- function(cname, limit, print=TRUE) {
-	
-	# check parameter
-	if(!missing(cname)) if(!is.character(cname)) stop("Please specify 'cname' as string.")
-	if(!missing(limit)) if(!is.numeric(limit)) stop("Please specify 'limit' as integer.")
-	
-	# drop empty parameters
-	if(missing(cname)) cname <- NULL
-	if(missing(limit)) limit <- NULL
-	
-	# make request
-  res <- m_get_url(path="stats/toplist", cname=cname, limit=limit)
-  raw <- m_parse(res)
-  df <- to_df(raw, "stats_top")
-  
-  # return
-  if(print) print(df)
-  invisible(df)
-}
+
 
 
 #' @title Get images
