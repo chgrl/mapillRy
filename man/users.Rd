@@ -44,6 +44,6 @@ users are ordered by their last captured times.
 }
 \examples{
 \dontrun{
-users(user_name="mynameis")
+users(user_name="billy_bob")
 }
 }

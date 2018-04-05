@@ -129,7 +129,7 @@ usr_to_df <- function(lst, fields) {
 }
 
 
-# convert user list to data frame
+# convert user stats to data frame
 usr_stats_to_df <- function(lst, fields) {
   num_usr <- length(lst)
   if(num_usr==0) df <- NULL

@@ -15,8 +15,8 @@ user_stats(user_name, user_key, fields, json = FALSE, print = TRUE)
 \item{user_key}{User key as string (or vector of strings). Optional, if \code{user_name} is given.}
 
 \item{fields}{Partially selected output fields, given as string or vector of strings. 
-Fields are sorted in given order. Available fields: \code{images}, 
-\code{sequences}, \code{edits}, \code{blurs}. 
+Fields are sorted in given order. Available fields: \code{user_name}, \code{user_key},
+\code{images}, \code{sequences}, \code{edits}, \code{blurs}. 
 If \code{fields} is missing (default), all available fields are returned.}
 
 \item{json}{If \code{FALSE} (default) the results are returned as simplified
@@ -33,6 +33,9 @@ Get statistics about a user.
 }
 \examples{
 \dontrun{
-users(user_name="mynameis")
+user_stats(user_name="billy_bob")
+user_stats(user_name=c("billy_bob", "mthagaard"), 
+           user_key=c("5gXh9Bb43yNhWOCoVC-FjQ", "vRyJQKolUExxn6HQiTZMRg"), 
+           fields=c("user_name","blurs","images", "distance"))
 }
 }

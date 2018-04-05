@@ -169,7 +169,7 @@ sequences <- function(bbox, start_time, end_time,
 #' @export
 #' @examples
 #' \dontrun{
-#' users(user_name="mynameis")
+#' users(user_name="billy_bob")
 #' }
 users <- function(bbox, user_name, user_key, 
                   page, per_page, fields, 
@@ -212,8 +212,8 @@ users <- function(bbox, user_name, user_key,
 #' @param user_name Username as string (or vector of strings). Optional, if \code{user_key} is given.
 #' @param user_key User key as string (or vector of strings). Optional, if \code{user_name} is given.
 #' @param fields Partially selected output fields, given as string or vector of strings. 
-#' Fields are sorted in given order. Available fields: \code{images}, 
-#' \code{sequences}, \code{edits}, \code{blurs}. 
+#' Fields are sorted in given order. Available fields: \code{user_name}, \code{user_key},
+#' \code{images}, \code{sequences}, \code{edits}, \code{blurs}. 
 #' If \code{fields} is missing (default), all available fields are returned.
 #' @param json If \code{FALSE} (default) the results are returned as simplified
 #' \code{data.frame}. \code{TRUE} (invisibly) returns the original JSON object (\code{fields} is
@@ -224,7 +224,10 @@ users <- function(bbox, user_name, user_key,
 #' @export
 #' @examples
 #' \dontrun{
-#' users(user_name="mynameis")
+#' user_stats(user_name="billy_bob")
+#' user_stats(user_name=c("billy_bob", "mthagaard"), 
+#'            user_key=c("5gXh9Bb43yNhWOCoVC-FjQ", "vRyJQKolUExxn6HQiTZMRg"), 
+#'            fields=c("user_name","blurs","images", "distance"))
 #' }
 user_stats <- function(user_name, user_key, 
                        fields, json=FALSE, print=TRUE) {
