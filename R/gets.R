@@ -339,49 +339,42 @@ leaderboard <- function(bbox, country,
 }
 
 
-
-
-
 #' @title Get images
 #' @description Save images and display images in R.
 #'
-#' @param key Image key.
+#' @param img_key Image key.
 #' @param size Image size. One of \code{s[mall]} (320px), 
 #' \code{m[edium]} (640px, the default), \code{l[arge]} (1024px) 
 #' or \code{h[uge]} (2048px).
 #' @param save Directory where to save the image file. Optional --
 #' if missing, the image is saved as temporary file and diplayed.
-#' @return An image.
+#' @return If \code{save=FALSE}, an image is displayed only. 
+#' Otherwise, the path of the saved image is returned.
 #' @source \url{https://a.mapillary.com/#images}
 #' @export
 #' @examples
 #' \dontrun{
-#' img <- search_im_close(lat=46.804159, lon=7.166325, 
-#'   distance=10000, limit=1, print=FALSE)$key
-#' get_im(key=img, size="m")
-#' img.path <- get_im(key=img, size="h", save=getwd())
+#' img <- images(closeto=c(9.436385,46.336591), radius=1000, 
+#'   page=1, per_page=1, print=FALSE)$img_key
+#' get_img(img_key=img)
+#' img.path <- get_img(img_key=img, size="h", save=tempdir())
 #' img.path
 #' }
-get_im <- function(key, size="m", save) {
-  
-  # check parameters
-  if(!missing(key)) if(!is.character(key)) stop("Please specify 'key' as string.")
-  if(!missing(size)) if(!is.character(size)) stop("Please specify 'size' as string.")
-  if(!missing(save)) if(!is.character(save)) stop("Please specify 'save' as string.")
+get_img <- function(img_key, size="m", save) {
   
   # prepare url
   avail_sizes <- c("small", "medium", "large", "huge")
   sizes <- c(320, 640, 1024, 2048)
   size <- sizes[pmatch(size, avail_sizes)]
-  img_url <- paste0("https://d1cuyjsrcm0gby.cloudfront.net/", key, "/thumb-", size, ".jpg")
+  img_url <- paste0("https://d1cuyjsrcm0gby.cloudfront.net/", img_key, "/thumb-", size, ".jpg")
   
   # download image
-  rtrn <- FALSE
+  rtrn <- TRUE
   if(missing(save)) {
     save <- tempdir()
-    rtrn <- TRUE
+    rtrn <- FALSE
   }
-  img_path <- file.path(save, paste(key, "jpg", sep="."))
+  img_path <- file.path(save, paste(img_key, "jpg", sep="."))
   download.file(img_url, img_path, quiet=TRUE, mode="wb")
   
   # display image
