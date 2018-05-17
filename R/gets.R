@@ -423,3 +423,29 @@ view_img <- function(img_key, mode="m", size="m") {
   # return image url
   invisible(img_url)
 }
+
+
+#' @title Sequence images
+#' @description Get image keys of a sequence.
+#'
+#' @param seq_key Sequence key.
+#' @return Vector of image keys.
+#' @source \url{https://a.mapillary.com/#sequences}
+#' @export
+#' @examples
+#' \dontrun{
+#' seq <- sequences(bbox=c(19.963,49.317,20.004,49.325), page=1, per_page=1)$seq_key
+#' img_keys <- seq_img(seq)
+#' }
+seq_img <- function(seq_key) {
+  
+  # make request
+  res <- m_get_url(path=paste0("sequences/", seq_key))
+  raw <- m_parse(res)
+  
+  # get image list
+  img_keys <- unlist(raw[["properties"]][["coordinateProperties"]][["image_keys"]])
+  
+  # return
+  invisible(img_keys)
+}
