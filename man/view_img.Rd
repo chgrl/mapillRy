@@ -30,6 +30,6 @@ View images online.
 \dontrun{
 img <- images(closeto=c(9.436385,46.336591), radius=1000, 
   page=1, per_page=1, print=FALSE)$img_key
-view_img(img_key=img)
+view_img(img_key=img, mode="d")
 }
 }
