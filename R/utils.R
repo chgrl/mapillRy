@@ -173,3 +173,12 @@ lead_to_df <- function(lst, fields) {
   
   return(df)
 }
+
+
+# get single image
+get_single_image <- function(key, size, dir) {
+  img_url <- paste0("https://d1cuyjsrcm0gby.cloudfront.net/", key, "/thumb-", size, ".jpg")
+  img_path <- file.path(dir, paste(key, "jpg", sep="."))
+  download.file(img_url, img_path, quiet=TRUE, mode="wb")
+  return(img_path)
+}

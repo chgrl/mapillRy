@@ -7,31 +7,33 @@
 \url{https://a.mapillary.com/#images}
 }
 \usage{
-get_img(img_key, size = "m", save)
+get_img(img_key, size = "m", dir = tempdir(), display = TRUE)
 }
 \arguments{
-\item{img_key}{Image key.}
+\item{img_key}{Image key or vector of image keys.}
 
 \item{size}{Image size. One of \code{s[mall]} (320px), 
 \code{m[edium]} (640px, the default), \code{l[arge]} (1024px) 
 or \code{h[uge]} (2048px).}
 
-\item{save}{Directory where to save the image file. Optional --
-if missing, the image is saved as temporary file and diplayed.}
+\item{dir}{Directory where to save the image file (default is a
+temporary directory).}
+
+\item{display}{If \code{TRUE} (default), the image is displayed 
+If \code{img_key} is a vector, only the first image is displayed.}
 }
 \value{
-If \code{save=FALSE}, an image is displayed only. 
-Otherwise, the path of the saved image is returned.
+The path to the saved image(s) as string or vector of strings.
 }
 \description{
-Save images and display images in R.
+Save and display images in R.
 }
 \examples{
 \dontrun{
 img <- images(closeto=c(9.436385,46.336591), radius=1000, 
   page=1, per_page=1, print=FALSE)$img_key
 get_img(img_key=img)
-img.path <- get_img(img_key=img, size="h", save=tempdir())
+img.path <- get_img(img_key=img, size="h")
 img.path
 }
 }

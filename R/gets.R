@@ -188,7 +188,7 @@ users <- function(bbox, user_name, user_key,
   if(missing(per_page)) per_page <- NULL
   if(missing(fields)) fields <- available_fields
 
-  	# make request
+  # make request
   res <- m_get_url(path="users", bbox=bbox,
                    usernames=user_name, userkeys=user_key, 
                    page=page, per_page=per_page)
@@ -340,16 +340,17 @@ leaderboard <- function(bbox, country,
 
 
 #' @title Get images
-#' @description Save images and display images in R.
+#' @description Save and display images in R.
 #'
-#' @param img_key Image key.
+#' @param img_key Image key or vector of image keys.
 #' @param size Image size. One of \code{s[mall]} (320px), 
 #' \code{m[edium]} (640px, the default), \code{l[arge]} (1024px) 
 #' or \code{h[uge]} (2048px).
-#' @param save Directory where to save the image file. Optional --
-#' if missing, the image is saved as temporary file and diplayed.
-#' @return If \code{save=FALSE}, an image is displayed only. 
-#' Otherwise, the path of the saved image is returned.
+#' @param dir Directory where to save the image file (default is a
+#' temporary directory).
+#' @param display If \code{TRUE} (default), the image is displayed 
+#' If \code{img_key} is a vector, only the first image is displayed.
+#' @return The path to the saved image(s) as string or vector of strings.
 #' @source \url{https://a.mapillary.com/#images}
 #' @export
 #' @examples
@@ -357,33 +358,29 @@ leaderboard <- function(bbox, country,
 #' img <- images(closeto=c(9.436385,46.336591), radius=1000, 
 #'   page=1, per_page=1, print=FALSE)$img_key
 #' get_img(img_key=img)
-#' img.path <- get_img(img_key=img, size="h", save=tempdir())
+#' img.path <- get_img(img_key=img, size="h")
 #' img.path
 #' }
-get_img <- function(img_key, size="m", save) {
+get_img <- function(img_key, size="m", dir=tempdir(), display=TRUE) {
   
   # prepare url
   avail_sizes <- c("small", "medium", "large", "huge")
   sizes <- c(320, 640, 1024, 2048)
   size <- sizes[pmatch(size, avail_sizes)]
-  img_url <- paste0("https://d1cuyjsrcm0gby.cloudfront.net/", img_key, "/thumb-", size, ".jpg")
+  #img_url <- paste0("https://d1cuyjsrcm0gby.cloudfront.net/", img_key, "/thumb-", size, ".jpg")
   
-  # download image
-  rtrn <- TRUE
-  if(missing(save)) {
-    save <- tempdir()
-    rtrn <- FALSE
+  img_path <- NULL
+  for(i in 1:length(img_key)) {
+    img_path <- append(img_path, get_single_image(img_key[i], size, dir))
   }
-  img_path <- file.path(save, paste(img_key, "jpg", sep="."))
-  download.file(img_url, img_path, quiet=TRUE, mode="wb")
   
   # display image
-  img <- readJPEG(img_path, native=TRUE)
+  img <- readJPEG(img_path[1], native=TRUE)
   plot(0:1, 0:1, type="n", ann=FALSE, axes=FALSE)
   rasterImage(img, 0, 0, 1, 1)
   
   # return image path
-  if(rtrn) invisible(img_path)
+  invisible(img_path)
 }
 
 
